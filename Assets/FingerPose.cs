@@ -8,6 +8,11 @@ using System;
 
 public class FingerPose : MonoBehaviour
 {
+    public Button editButton;
+    public Button confirmButton;
+    public Button abortButton;
+    public Button adjustButton;
+    public Button doneButton;
     Vector3 InitialPose, FinalPose, PrismCenter, Scale_incubes, AssetPose, AssetRot;
     Vector3Int InitialPose_incubes, FinalPose_incubes;
     GameObject Prism, ModelTarget;
@@ -41,6 +46,7 @@ public class FingerPose : MonoBehaviour
     string AssetName;
     private void Start()
     {
+        
         handJointService = CoreServices.GetInputSystemDataProvider<IMixedRealityHandJointService>();
         cubesize = _MinecraftBuilder.cubesize;
         HandAngleThreshold = 30;
@@ -56,10 +62,12 @@ public class FingerPose : MonoBehaviour
         Prism = Selectors[3];
         _meshCollider = Prism.GetComponent<MeshCollider>();
         _inputActionHandler = gameObject.GetComponent<InputActionHandler>();
+        Debug.Log("start");
 
-        
         //_meshCollider.convex = true;  // We need to make this as a kabse later.
     }
+
+
 
     public void Update()
     {
@@ -73,7 +81,7 @@ public class FingerPose : MonoBehaviour
                     fingersClosed = Vector3.Distance(poseLeftIndex.Position, poseLeftThumb.Position) < fingersThreshold;
                     if (selectorInstantiated)
                     {
-                        if (trackingLost)
+                        if (trackingLost) // tracking was lost in previous execution of Update() but not lost in this execution
                         {
                             if (fingersClosed)
                             {
@@ -90,7 +98,7 @@ public class FingerPose : MonoBehaviour
                                 Selector.transform.localScale = Scale_incubes;
 
                             }
-                            else
+                            else 
                             {
                                 //Destroy selector
                                 Destroy(Selector);
@@ -99,7 +107,7 @@ public class FingerPose : MonoBehaviour
                             }
                             trackingLost = false;
                         }
-                        else
+                        else // tracking not lost
                         {
                             if (fingersClosed)
                             {
@@ -126,7 +134,12 @@ public class FingerPose : MonoBehaviour
                                 //selectorInstantiated = false; this should happen in the else of doneInstantiation
                                 doneInstantiation = true;
                                 //selectorInstantiated = false;
-                                appBar.SetActive(true);
+                                appBar.SetActive(true); // here confirm abort adjust buttons appear. fcts called based on button press
+                                editButton.gameObject.SetActive(false);
+                                confirmButton.gameObject.SetActive(true);
+                                abortButton.gameObject.SetActive(true);
+                                adjustButton.gameObject.SetActive(true);
+
                             }
                         }
 
@@ -203,6 +216,49 @@ public class FingerPose : MonoBehaviour
             Selector.transform.localScale = Scale_incubes;
             
         }*/
+    }
+
+    public void EditButtonClick()
+    {
+
+        // editButton.gameObject.SetActive(false);
+        Debug.Log("button click");
+        EditorActivator = true;
+        requestSelectorShape(0);
+    }
+
+    public void ConfirmButtonClick()
+    {
+        confirmButton.gameObject.SetActive(false);
+        abortButton.gameObject.SetActive(false);
+        adjustButton.gameObject.SetActive(false);
+        editButton.gameObject.SetActive(true);
+        EditorActivator = false;
+    }
+
+    public void AbortButtonClick()
+    {
+        confirmButton.gameObject.SetActive(false);
+        abortButton.gameObject.SetActive(false);
+        adjustButton.gameObject.SetActive(false);
+        // editButton.gameObject.SetActive(true);
+        // EditorActivator = false;
+    }
+
+    public void AdjustButtonClick()
+    {
+        confirmButton.gameObject.SetActive(false);
+        abortButton.gameObject.SetActive(false);
+        adjustButton.gameObject.SetActive(false);
+        doneButton.gameObject.SetActive(true);
+    }
+
+    public void DoneButtonClick()
+    {
+        confirmButton.gameObject.SetActive(true);
+        abortButton.gameObject.SetActive(true);
+        adjustButton.gameObject.SetActive(true);
+        doneButton.gameObject.SetActive(false);
     }
 
     public void editor3D()  //instantiator

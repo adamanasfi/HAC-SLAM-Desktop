@@ -38,6 +38,7 @@ public class LabelerFingerPose : MonoBehaviour
     ButtonConfigHelper ButtonText;
     LabelAndInstance LabelInstance;
     byte label;
+    public GameObject keyboard;
 
     // Start is called before the first frame update
     void Start()
@@ -175,9 +176,27 @@ public class LabelerFingerPose : MonoBehaviour
             
             if (ToolTextBool)
             {
-                //////Enable when deploying to HL
-                tooltipText.ToolTipText = holoKey.texty;
-                
+                foreach (char c in Input.inputString)
+                {
+                    Debug.Log("TEST");
+                    // Handle backspace
+                    if (c == '\b' && tooltipText.ToolTipText.Length > 0)
+                    {
+                        // Remove the last character
+                        tooltipText.ToolTipText = tooltipText.ToolTipText.Substring(0, tooltipText.ToolTipText.Length - 1);
+                    }
+                    // Handle enter/return key (new line)
+                    else if (c == '\n' || c == '\r')
+                    {
+                        // Do nothing or add a new line if required
+                        ToolTextBool = false;
+                    }
+                    // Handle regular input
+                    else
+                    {
+                        tooltipText.ToolTipText += c; // Add the character to the current text
+                    }
+                } 
                 //////Enable when trying in editor
                 //tooltipText.ToolTipText = "Akal";
             }
@@ -310,14 +329,13 @@ public class LabelerFingerPose : MonoBehaviour
         tool = Instantiate(tooltip, Selector.transform.position + new Vector3(0, (Selector.transform.localScale.y) / 2, 0), Quaternion.identity);
         tooltipText = tool.GetComponent<ToolTip>();
         LabelInstance = tool.GetComponent<LabelAndInstance>();
-        //labelVoxelizer();
+        // labelVoxelizer();
         
 
         //////// Enable when deploying to HoloLens
         holoKey.OpenKeyboard();
 
         ToolTextBool = true;
-        
     }
 
     public void AssetToolTip(Vector3 pose, string name, byte Label, byte Instance)

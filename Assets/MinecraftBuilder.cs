@@ -86,7 +86,7 @@ public class MinecraftBuilder : MonoBehaviour
             }
         }*/
 
-        MappingSwitch = true;
+        MappingSwitch = false;
 
         VoxelPose = new List<Vector3>();
         VoxelByte = new List<Byte>();

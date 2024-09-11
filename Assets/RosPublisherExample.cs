@@ -18,7 +18,6 @@ using Microsoft.MixedReality.Toolkit.Examples.Demos;
 /// </summary>
 public class RosPublisherExample : MonoBehaviour
 {
-
     ROSConnection ros;
     public MinecraftBuilder mcb;
     public GameObject RobotTarget;
