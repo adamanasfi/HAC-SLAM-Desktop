@@ -10,7 +10,7 @@ public class ToggleClick : MonoBehaviour
     private CompressableButton button;
     private ToggleOnEvents toggleOnEvent;
     private ToggleOffEvents toggleOffEvent;
-    int state;
+    bool state;
 
     // Start is called before the first frame update
     void Start()
@@ -18,7 +18,8 @@ public class ToggleClick : MonoBehaviour
         button = GetComponent<CompressableButton>();
         toggleOnEvent = button.GetStateEvents<ToggleOnEvents>("ToggleOn");
         toggleOffEvent = button.GetStateEvents<ToggleOffEvents>("ToggleOff");
-        state = button.States[4].Value;
+        state = toggleOnEvent.IsSelectedOnStart;
+        Debug.Log(state);
     }
 
     // Update is called once per frame
@@ -31,17 +32,17 @@ public class ToggleClick : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0)) // 0 = left mouse button
         {
-           if (state == 0)
+           if (state)
             {
-                toggleOnEvent.OnToggleOn.Invoke();
-                state = 1;
-                Debug.Log("TOGGLE ON");
+                toggleOffEvent.OnToggleOff.Invoke();
+                state = false;
+                Debug.Log("TOGGLED OFF");
             }
            else
             {
-                toggleOffEvent.OnToggleOff.Invoke();
-                state = 0;
-                Debug.Log("TOGGLE OFF");
+                toggleOnEvent.OnToggleOn.Invoke();
+                state = true;
+                Debug.Log("TOGGLED ON");
             }
 
 
