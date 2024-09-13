@@ -5,7 +5,6 @@ using UnityEngine;
 public class MenuPlacement : MonoBehaviour
 {
     
-    public GameObject menu;
     public float distanceInFront = 0.25f;
 
     void Update()
@@ -16,12 +15,12 @@ public class MenuPlacement : MonoBehaviour
         Vector3 menuPosition = cameraPosition + cameraForward * distanceInFront;
 
        
-        menu.transform.position = menuPosition;
+        transform.position = menuPosition;
 
         
-        Vector3 directionToCamera = Camera.main.transform.position - menu.transform.position;
+        Vector3 directionToCamera = Camera.main.transform.position - transform.position;
 
-        
+       
         Quaternion targetRotation = Quaternion.LookRotation(directionToCamera);
 
        
@@ -30,9 +29,9 @@ public class MenuPlacement : MonoBehaviour
         // eulerRotation.z = 0; 
 
         
-        menu.transform.rotation = Quaternion.Euler(eulerRotation);
+        transform.rotation = Quaternion.Euler(eulerRotation);
 
         
-        menu.transform.Rotate(30, 180, 0);
+        transform.Rotate(30, 180, 0);
     }
 }

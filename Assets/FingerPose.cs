@@ -5,14 +5,13 @@ using Microsoft.MixedReality.Toolkit.UI.BoundsControl;
 using Microsoft.MixedReality.Toolkit.UI;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 public class FingerPose : MonoBehaviour
 {
-    public Button editButton;
-    public Button confirmButton;
-    public Button abortButton;
-    public Button adjustButton;
-    public Button doneButton;
+    public GameObject IndicatorPrefab, Indicator;
+    bool instantiatedIndicator;
+    float zDepth;
     Vector3 InitialPose, FinalPose, PrismCenter, Scale_incubes, AssetPose, AssetRot;
     Vector3Int InitialPose_incubes, FinalPose_incubes;
     GameObject Prism, ModelTarget;
@@ -27,7 +26,7 @@ public class FingerPose : MonoBehaviour
     IMixedRealityHandJointService handJointService;
     float cubesize, HandAngleThreshold;
     float fingersThreshold = 0.04f;
-    GameObject Selector;
+    public GameObject Selector;
     bool EditorActivator, EditorActivatorOld, selectorInstantiated, trackingLost, fingersClosed, doneInstantiation, testingBool, ConvexityState, DeletingVoxels, AddingAssets, VuforiaEnabled, VuforiaFound, HandAngle;
 
     Renderer selectorMesh;
@@ -44,9 +43,12 @@ public class FingerPose : MonoBehaviour
     MeshCollider _meshCollider;
     InputActionHandler _inputActionHandler;
     string AssetName;
+    
     private void Start()
     {
-        
+
+        instantiatedIndicator = false;
+        zDepth = Camera.main.nearClipPlane;
         handJointService = CoreServices.GetInputSystemDataProvider<IMixedRealityHandJointService>();
         cubesize = _MinecraftBuilder.cubesize;
         HandAngleThreshold = 30;
@@ -62,6 +64,7 @@ public class FingerPose : MonoBehaviour
         Prism = Selectors[3];
         _meshCollider = Prism.GetComponent<MeshCollider>();
         _inputActionHandler = gameObject.GetComponent<InputActionHandler>();
+        
         Debug.Log("start");
 
         //_meshCollider.convex = true;  // We need to make this as a kabse later.
@@ -73,121 +76,80 @@ public class FingerPose : MonoBehaviour
     {
         if (EditorActivator)
         {
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            zDepth += scroll;
             if (!doneInstantiation)
             {
-                if (HandJointUtils.TryGetJointPose(Microsoft.MixedReality.Toolkit.Utilities.TrackedHandJoint.IndexTip, Microsoft.MixedReality.Toolkit.Utilities.Handedness.Right, out poseLeftIndex))
+                if (selectorInstantiated)
                 {
-                    HandJointUtils.TryGetJointPose(Microsoft.MixedReality.Toolkit.Utilities.TrackedHandJoint.ThumbTip, Microsoft.MixedReality.Toolkit.Utilities.Handedness.Right, out poseLeftThumb);
-                    fingersClosed = Vector3.Distance(poseLeftIndex.Position, poseLeftThumb.Position) < fingersThreshold;
-                    if (selectorInstantiated)
-                    {
-                        if (trackingLost) // tracking was lost in previous execution of Update() but not lost in this execution
-                        {
-                            if (fingersClosed)
-                            {
-                                //Update size of selector
-                                FinalPose = poseLeftIndex.Position;
-                                //converting units to cubes
-                                FinalPose_incubes.Set(Mathf.RoundToInt(FinalPose.x / cubesize), Mathf.RoundToInt(FinalPose.y / cubesize), Mathf.RoundToInt(FinalPose.z / cubesize));
-                                PrismCenter = (InitialPose_incubes + FinalPose_incubes);
-                                Scale_incubes.x = Mathf.Max(Mathf.Abs((InitialPose_incubes.x - FinalPose_incubes.x) * cubesize) + cubesize, cubesize);
-                                Scale_incubes.y = Mathf.Max(Mathf.Abs((InitialPose_incubes.y - FinalPose_incubes.y) * cubesize) + cubesize, cubesize);
-                                Scale_incubes.z = Mathf.Max(Mathf.Abs((InitialPose_incubes.z - FinalPose_incubes.z) * cubesize) + cubesize, cubesize);
-                                //transform selector
-                                Selector.transform.position = PrismCenter * cubesize / 2;
-                                Selector.transform.localScale = Scale_incubes;
+                    //Update size of selector
+                    Vector3 mousePosition = Input.mousePosition;
+                    mousePosition.z = zDepth;
+                    Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+                    FinalPose = mouseWorldPosition;
+                    Indicator.transform.position = mouseWorldPosition;
+                    //converting units to cubes
+                    FinalPose_incubes.Set(Mathf.RoundToInt(FinalPose.x / cubesize), Mathf.RoundToInt(FinalPose.y / cubesize), Mathf.RoundToInt(FinalPose.z / cubesize));
+                    PrismCenter = (InitialPose_incubes + FinalPose_incubes);
 
-                            }
-                            else 
-                            {
-                                //Destroy selector
-                                Destroy(Selector);
-                                selectorInstantiated = false;
-
-                            }
-                            trackingLost = false;
-                        }
-                        else // tracking not lost
-                        {
-                            if (fingersClosed)
-                            {
-                                //Update size of selector
-                                FinalPose = poseLeftIndex.Position;
-                                //converting units to cubes
-                                FinalPose_incubes.Set(Mathf.RoundToInt(FinalPose.x / cubesize), Mathf.RoundToInt(FinalPose.y / cubesize), Mathf.RoundToInt(FinalPose.z / cubesize));
-                                PrismCenter = (InitialPose_incubes + FinalPose_incubes);
-
-                                //without extra cubesize
-                                Scale_incubes.x = Mathf.Max(Mathf.Abs((InitialPose_incubes.x - FinalPose_incubes.x) * cubesize), cubesize);
-                                Scale_incubes.y = Mathf.Max(Mathf.Abs((InitialPose_incubes.y - FinalPose_incubes.y) * cubesize), cubesize);
-                                Scale_incubes.z = Mathf.Max(Mathf.Abs((InitialPose_incubes.z - FinalPose_incubes.z) * cubesize), cubesize);
+                    //without extra cubesize
+                    Scale_incubes.x = Mathf.Max(Mathf.Abs((InitialPose_incubes.x - FinalPose_incubes.x) * cubesize), cubesize);
+                    Scale_incubes.y = Mathf.Max(Mathf.Abs((InitialPose_incubes.y - FinalPose_incubes.y) * cubesize), cubesize);
+                    Scale_incubes.z = Mathf.Max(Mathf.Abs((InitialPose_incubes.z - FinalPose_incubes.z) * cubesize), cubesize);
 
                                 
-                                //transform selector
-                                Selector.transform.position = PrismCenter * cubesize / 2;
-                                Selector.transform.localScale = Scale_incubes;
-
-                            }
-                            else   //successful instantiation process
-                            {
-                                //Set selector script
-                                //selectorInstantiated = false; this should happen in the else of doneInstantiation
-                                doneInstantiation = true;
-                                //selectorInstantiated = false;
-                                appBar.SetActive(true); // here confirm abort adjust buttons appear. fcts called based on button press
-                                editButton.gameObject.SetActive(false);
-                                confirmButton.gameObject.SetActive(true);
-                                abortButton.gameObject.SetActive(true);
-                                adjustButton.gameObject.SetActive(true);
-
-                            }
-                        }
-
-                    }
-                    else  //here the instantation happens
+                    //transform selector
+                    Selector.transform.position = PrismCenter * cubesize / 2;
+                    Selector.transform.localScale = Scale_incubes;
+                    
+                  
+                    if (!Input.GetMouseButton(0))   //successful instantiation process
                     {
-                        HandAngle = Vector3.Angle(Camera.main.transform.forward, (poseLeftIndex.Position - Camera.main.transform.position)) < HandAngleThreshold;
-                        if (fingersClosed && HandAngle)
-                        {
-                            //selector instantiation
-                            InitialPose = poseLeftIndex.Position;
-                            InitialPose_incubes.Set(Mathf.RoundToInt(InitialPose.x / cubesize), Mathf.RoundToInt(InitialPose.y / cubesize), Mathf.RoundToInt(InitialPose.z / cubesize));
-                            Selector = Instantiate(Prism, InitialPose_incubes, Quaternion.identity);
-                            Selector.name = "Prism";
-                            selectorInstantiated = true;
-                        }
-                        else
-                        {
-
-                            //selectorInstantiated = false; //don't think i need it (the whole else statement)
-                        }
+                        //Set selector script
+                        //selectorInstantiated = false; // this should happen in the else of doneInstantiation
+                        doneInstantiation = true;
+                        //selectorInstantiated = false;
+                        appBar.SetActive(true); // here confirm abort adjust buttons appear. fcts called based on button press
                     }
+                    
+
                 }
-                else
+                else  //here the instantation happens
                 {
-                    //When tracking is off:
-                    if (selectorInstantiated)
+                    Vector3 mousePosition = Input.mousePosition;
+                    mousePosition.z = zDepth;
+                    Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+                    if (!instantiatedIndicator)
                     {
-                        trackingLost = true;
+                        Indicator = Instantiate(IndicatorPrefab, mouseWorldPosition, Quaternion.identity);
+                        instantiatedIndicator = true;
                     }
                     else
                     {
-                        trackingLost = false;
+                        Indicator.transform.position = mouseWorldPosition;
+                    }
+                    Debug.Log("Waiting For Instantiation");
+
+                    if (Input.GetKey(KeyCode.Alpha1) && Input.GetMouseButtonDown(0))
+                    {
+                        Debug.Log("INSTANTIATION HAPPENING");
+                        
+                        //selector instantiation
+                        InitialPose = mouseWorldPosition;
+                        InitialPose_incubes.Set(Mathf.RoundToInt(InitialPose.x / cubesize), Mathf.RoundToInt(InitialPose.y / cubesize), Mathf.RoundToInt(InitialPose.z / cubesize));
+                        Vector3 center = new Vector3();
+                        center.Set(InitialPose_incubes.x * cubesize, InitialPose_incubes.y * cubesize, InitialPose_incubes.z * cubesize);
+                        Selector = Instantiate(Prism, center, Quaternion.identity);
+                        Selector.name = "Prism";
+                        selectorInstantiated = true;
                     }
                 }
             }
             else
             {
-                /*//Debug.Log("Done"); //app bar should confirm a boolean here. to finalize the editing phase
-                selectorMesh = Selector.GetComponent<MeshFilter>();
-                vertices = selectorMesh.mesh.vertices;
-                foreach (Vector3 vertex in vertices)
-                {
-                    Debug.Log("Vertex position: " + selectorMesh.transform.TransformPoint(vertex));
-                }*/
-                //vertexExtractor();
-                //testingBool = false;
                 selectorInstantiated = false;
+                instantiatedIndicator = false;
+                Destroy(Indicator);
             }
             
         }
@@ -218,48 +180,6 @@ public class FingerPose : MonoBehaviour
         }*/
     }
 
-    public void EditButtonClick()
-    {
-
-        // editButton.gameObject.SetActive(false);
-        Debug.Log("button click");
-        EditorActivator = true;
-        requestSelectorShape(0);
-    }
-
-    public void ConfirmButtonClick()
-    {
-        confirmButton.gameObject.SetActive(false);
-        abortButton.gameObject.SetActive(false);
-        adjustButton.gameObject.SetActive(false);
-        editButton.gameObject.SetActive(true);
-        EditorActivator = false;
-    }
-
-    public void AbortButtonClick()
-    {
-        confirmButton.gameObject.SetActive(false);
-        abortButton.gameObject.SetActive(false);
-        adjustButton.gameObject.SetActive(false);
-        // editButton.gameObject.SetActive(true);
-        // EditorActivator = false;
-    }
-
-    public void AdjustButtonClick()
-    {
-        confirmButton.gameObject.SetActive(false);
-        abortButton.gameObject.SetActive(false);
-        adjustButton.gameObject.SetActive(false);
-        doneButton.gameObject.SetActive(true);
-    }
-
-    public void DoneButtonClick()
-    {
-        confirmButton.gameObject.SetActive(true);
-        abortButton.gameObject.SetActive(true);
-        adjustButton.gameObject.SetActive(true);
-        doneButton.gameObject.SetActive(false);
-    }
 
     public void editor3D()  //instantiator
     {
