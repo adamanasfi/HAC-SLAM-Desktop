@@ -130,7 +130,7 @@ public class FingerPose : MonoBehaviour
                     }
                     Debug.Log("Waiting For Instantiation");
 
-                    if (Input.GetKey(KeyCode.Alpha1) && Input.GetMouseButtonDown(0))
+                    if (Input.GetKey(KeyCode.Space) && Input.GetMouseButtonDown(0))
                     {
                         Debug.Log("INSTANTIATION HAPPENING");
                         
@@ -160,7 +160,7 @@ public class FingerPose : MonoBehaviour
             Selector.transform.rotation = ModelTarget.transform.rotation;
         }
 
-        if (AddingAssets)
+        else if (AddingAssets)
         {
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             zDepth += scroll;
@@ -176,16 +176,16 @@ public class FingerPose : MonoBehaviour
             {
                 Indicator.transform.position = mouseWorldPosition;
             }
-            if (Input.GetKey(KeyCode.Alpha1) && Input.GetMouseButtonDown(0))
+            if (Input.GetKey(KeyCode.Space) && Input.GetMouseButtonDown(0))
             {
                 AssetPose = mouseWorldPosition;
                 AssetRot.Set(0, Camera.main.transform.localRotation.eulerAngles.y, 0);
                 Selector = Instantiate(Prism, AssetPose, Quaternion.Euler(AssetRot));
                 Selector.name = "Prism";
-                appBar.SetActive(true);
                 instantiatedIndicator = false;
-                AddingAssets = false;
                 Destroy(Indicator);
+                appBar.SetActive(true);
+                
             }
         }
 
@@ -269,7 +269,7 @@ public class FingerPose : MonoBehaviour
     
     public void officialVoxelizer()
     {
-        
+        Debug.Log("ENTERED VOXELIZER");
         selectorMesh = Selector.GetComponent<Renderer>();
 
         //Rounding of the bounds to units of cubes:
@@ -347,23 +347,25 @@ public class FingerPose : MonoBehaviour
     {
         if (AddingAssets)
         {
-            _inputActionHandler.enabled = true;
+            // _inputActionHandler.enabled = true;      NO NEED ON DESKTOP
             AssetInstance = Labeler.AssetInstance(AssetLabel);
             Labeler.AssetToolTip(Selector.transform.position, AssetName, AssetLabel, AssetInstance);
             _MinecraftBuilder.AddedVoxelByte.Clear();
+            Debug.Log("NOW VOXELIZE ASSET!");
             officialVoxelizer();
             _RosPublisher.PublishEditedPointCloudMsg();
             _RosPublisher.LabelPublisher();
-
         }
+
         else if (DeletingVoxels)
         {
             _MinecraftBuilder.DeletedVoxelByte.Clear();
             officialVoxelizer();
             _RosPublisher.PublishDeletedVoxels();
             doneInstantiation = false;
-
         }
+
+
         else if (VuforiaEnabled)
         {
             AssetInstance = Labeler.AssetInstance(AssetLabel);
