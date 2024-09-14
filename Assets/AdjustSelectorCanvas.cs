@@ -14,11 +14,7 @@ public class AdjustSelectorCanvas : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        fingerPose = GetComponentInParent<FingerPose>();
-        x.text = fingerPose.Selector.transform.position.x.ToString();
-        y.text = fingerPose.Selector.transform.position.y.ToString();
-        z.text = fingerPose.Selector.transform.position.z.ToString();
-        adjustedPose = fingerPose.Selector.transform.position;
+        Debug.Log("start");
         x.onEndEdit.AddListener(HandleInputEndEdit_x);
         y.onEndEdit.AddListener(HandleInputEndEdit_y);
         z.onEndEdit.AddListener(HandleInputEndEdit_z);
@@ -26,6 +22,8 @@ public class AdjustSelectorCanvas : MonoBehaviour
 
     void OnEnable()
     {
+        Debug.Log("OnEnable");
+        fingerPose = GetComponentInParent<FingerPose>();
         x.text = fingerPose.Selector.transform.position.x.ToString();
         y.text = fingerPose.Selector.transform.position.y.ToString();
         z.text = fingerPose.Selector.transform.position.z.ToString();

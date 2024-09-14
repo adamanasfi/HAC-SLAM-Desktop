@@ -109,7 +109,7 @@ public class FingerPose : MonoBehaviour
                         //selectorInstantiated = false; // this should happen in the else of doneInstantiation
                         doneInstantiation = true;
                         //selectorInstantiated = false;
-                        appBar.SetActive(true); // here confirm abort adjust buttons appear. fcts called based on button press
+                        appBar.SetActive(true); 
                     }
                     
 
@@ -158,6 +158,35 @@ public class FingerPose : MonoBehaviour
         {
             Selector.transform.position = ModelTarget.transform.position;
             Selector.transform.rotation = ModelTarget.transform.rotation;
+        }
+
+        if (AddingAssets)
+        {
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            zDepth += scroll;
+            Vector3 mousePosition = Input.mousePosition;
+            mousePosition.z = zDepth;
+            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+            if (!instantiatedIndicator)
+            {
+                Indicator = Instantiate(IndicatorPrefab, mouseWorldPosition, Quaternion.identity);
+                instantiatedIndicator = true;
+            }
+            else
+            {
+                Indicator.transform.position = mouseWorldPosition;
+            }
+            if (Input.GetKey(KeyCode.Alpha1) && Input.GetMouseButtonDown(0))
+            {
+                AssetPose = mouseWorldPosition;
+                AssetRot.Set(0, Camera.main.transform.localRotation.eulerAngles.y, 0);
+                Selector = Instantiate(Prism, AssetPose, Quaternion.Euler(AssetRot));
+                Selector.name = "Prism";
+                appBar.SetActive(true);
+                instantiatedIndicator = false;
+                AddingAssets = false;
+                Destroy(Indicator);
+            }
         }
 
 
@@ -405,7 +434,7 @@ public class FingerPose : MonoBehaviour
     public void EnableAssetAddition(bool state)
     {
         AddingAssets = state;
-        _inputActionHandler.enabled = state;
+       // _inputActionHandler.enabled = state;          NO NEED ON DESKTOP APPLICATION!
     }
 
     public void AssetLabelNumber(int label)
