@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -7283549008794745039}
   - component: {fileID: -8421638657362344543}
   - component: {fileID: -3488523845248222207}
+  - component: {fileID: -35736156027627435}
   m_Layer: 0
   m_Name: Pallet Docker
   m_TagString: Untagged
@@ -102,7 +103,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 1
+  m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -2432090755550338912, guid: 853b85bd7685ba141afbc67b4c913c4c, type: 3}
 --- !u!114 &-7283549008794745039
@@ -179,3 +180,19 @@ MonoBehaviour:
   executionOrder: 0
   constraintOnRotation: 5
   useLocalSpaceForConstraint: 1
+--- !u!114 &-35736156027627435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8958619307389699015}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95ce0ad9c035a98439d272ebb60033cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  xArrow: {fileID: 0}
+  yArrow: {fileID: 0}
+  zArrow: {fileID: 0}
+  arrowPrefab: {fileID: 4488443073500907372, guid: 3eb03d503da70a54dbb6e837d81ca135, type: 3}

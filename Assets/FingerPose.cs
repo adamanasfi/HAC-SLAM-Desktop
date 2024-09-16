@@ -109,7 +109,8 @@ public class FingerPose : MonoBehaviour
                         //selectorInstantiated = false; // this should happen in the else of doneInstantiation
                         doneInstantiation = true;
                         //selectorInstantiated = false;
-                        appBar.SetActive(true); 
+                        appBar.SetActive(true);
+                        Selector.GetComponent<AxisDrag>().enabled = true;
                     }
                     
 
@@ -182,6 +183,7 @@ public class FingerPose : MonoBehaviour
                 AssetRot.Set(0, Camera.main.transform.localRotation.eulerAngles.y, 0);
                 Selector = Instantiate(Prism, AssetPose, Quaternion.Euler(AssetRot));
                 Selector.name = "Prism";
+                Selector.GetComponent<AxisDrag>().enabled = true;
                 instantiatedIndicator = false;
                 Destroy(Indicator);
                 appBar.SetActive(true);
@@ -325,6 +327,13 @@ public class FingerPose : MonoBehaviour
         }
 
 
+    }
+
+    public void hideAxes()
+    {
+        Selector.GetComponent<AxisDrag>().xArrow.SetActive(false);
+        Selector.GetComponent<AxisDrag>().yArrow.SetActive(false);
+        Selector.GetComponent<AxisDrag>().zArrow.SetActive(false);
     }
 
     public void abortSelector()
