@@ -23,7 +23,7 @@ public class LabelerFingerPose : MonoBehaviour
     Vector3Int InitialPose_incubes, FinalPose_incubes, minbound_inCubes, maxbound_inCubes;
     public MinecraftBuilder _minecraftbuilder;
     public RosPublisherExample Pub;
-    GameObject Selector, tool;
+    public GameObject Selector, tool;
     public GameObject appBar, Prism, tooltip;
     MeshCollider _meshCollider;
     Renderer selectorMesh;
@@ -105,7 +105,8 @@ public class LabelerFingerPose : MonoBehaviour
                         //selectorInstantiated = false; // this should happen in the else of doneInstantiation
                         doneInstantiation = true;
                         //selectorInstantiated = false;
-                        appBar.SetActive(true); // here confirm abort adjust buttons appear. fcts called based on button press
+                        appBar.SetActive(true);
+                        Selector.GetComponent<AxisDrag>().enabled = true;
                     }
 
 
@@ -126,7 +127,7 @@ public class LabelerFingerPose : MonoBehaviour
                     }
                     Debug.Log("Waiting For Instantiation");
 
-                    if (Input.GetKey(KeyCode.Alpha1) && Input.GetMouseButtonDown(0))
+                    if (Input.GetKey(KeyCode.Space) && Input.GetMouseButtonDown(0))
                     {
                         Debug.Log("INSTANTIATION HAPPENING");
 
@@ -248,6 +249,22 @@ public class LabelerFingerPose : MonoBehaviour
         //Destroy(Selector);
         Pub.LabelPublisher();
 
+    }
+
+    public void setAxes(bool state)
+    {
+        Selector.GetComponent<AxisDrag>().enabled = state;
+        Selector.GetComponent<AxisDrag>().xArrow.SetActive(state);
+        Selector.GetComponent<AxisDrag>().yArrow.SetActive(state);
+        Selector.GetComponent<AxisDrag>().zArrow.SetActive(state);
+    }
+
+    public void deleteAxes()
+    {
+        Destroy(Selector.GetComponent<AxisDrag>().xArrow);
+        Destroy(Selector.GetComponent<AxisDrag>().yArrow);
+        Destroy(Selector.GetComponent<AxisDrag>().zArrow);
+        Selector.GetComponent<AxisDrag>().enabled = false;
     }
 
     public void abortSelector()

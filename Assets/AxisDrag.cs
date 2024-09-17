@@ -18,30 +18,26 @@ public class AxisDrag : MonoBehaviour
     void Start()
     {
         mainCamera = Camera.main;
-        xArrow = Instantiate(arrowPrefab,Vector3.zero,Quaternion.identity);
+        xArrow = Instantiate(arrowPrefab,Vector3.zero, Quaternion.identity);
         yArrow = Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
         zArrow = Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
-
+        xArrow.transform.forward = transform.right;
+        yArrow.transform.forward = transform.up;
+        zArrow.transform.forward = transform.forward;
         // for x
-        x_rotation = Quaternion.FromToRotation(xArrow.transform.forward, transform.right);
-        xArrow.transform.rotation = x_rotation;
-        x_center = transform.position + transform.right * (0.5f);
+        x_center = transform.position + xArrow.transform.forward * (0.5f);
         xArrow.transform.position = x_center;
         Renderer x_renderer = xArrow.GetComponent<Renderer>();
         x_renderer.material.color = Color.red;
 
         // for y
-        y_rotation = Quaternion.FromToRotation(yArrow.transform.forward, transform.up);
-        yArrow.transform.rotation = y_rotation;
-        y_center = transform.position + transform.up * (0.5f);
+        y_center = transform.position + yArrow.transform.forward * (0.5f);
         yArrow.transform.position = y_center;
         Renderer y_renderer = yArrow.GetComponent<Renderer>();
         y_renderer.material.color = Color.green;
 
         // for z
-        z_rotation = Quaternion.FromToRotation(zArrow.transform.forward, transform.forward);
-        zArrow.transform.rotation = z_rotation;
-        z_center = transform.position + transform.forward * (0.5f);
+        z_center = transform.position + zArrow.transform.forward * (0.5f);
         zArrow.transform.position = z_center;
         Renderer z_renderer = zArrow.GetComponent<Renderer>();
         z_renderer.material.color = Color.blue;
@@ -53,13 +49,13 @@ public class AxisDrag : MonoBehaviour
     void Update()
     {
         // for x
-        x_center = transform.position + transform.right * (0.5f);
+        x_center = transform.position + xArrow.transform.forward * (0.5f);
         xArrow.transform.position = x_center;
         // for y
-        y_center = transform.position + transform.up * (0.5f);
+        y_center = transform.position + yArrow.transform.forward * (0.5f);
         yArrow.transform.position = y_center;
         // for z
-        z_center = transform.position + transform.forward * (0.5f);
+        z_center = transform.position + zArrow.transform.forward * (0.5f);
         zArrow.transform.position = z_center;
         // Handle mouse input
         if (Input.GetMouseButtonDown(0))
@@ -70,7 +66,7 @@ public class AxisDrag : MonoBehaviour
             // Check if clicking near any axis
             if (Physics.Raycast(ray, out hit))
             {
-                float axisThreshold = 0.1f;
+                float axisThreshold = 0.2f;
 
                 // Check for X axis selection
                 if (Vector3.Distance(hit.point, transform.position + transform.right) < axisThreshold)

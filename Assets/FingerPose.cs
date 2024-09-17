@@ -9,6 +9,7 @@ using TMPro;
 
 public class FingerPose : MonoBehaviour
 {
+    bool AddedAsset;
     public GameObject IndicatorPrefab, Indicator;
     bool instantiatedIndicator;
     float zDepth;
@@ -46,7 +47,7 @@ public class FingerPose : MonoBehaviour
     
     private void Start()
     {
-
+        AddedAsset = false;
         instantiatedIndicator = false;
         zDepth = Camera.main.nearClipPlane;
         handJointService = CoreServices.GetInputSystemDataProvider<IMixedRealityHandJointService>();
@@ -163,31 +164,35 @@ public class FingerPose : MonoBehaviour
 
         else if (AddingAssets)
         {
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
-            zDepth += scroll;
-            Vector3 mousePosition = Input.mousePosition;
-            mousePosition.z = zDepth;
-            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-            if (!instantiatedIndicator)
+            if (!AddedAsset)
             {
-                Indicator = Instantiate(IndicatorPrefab, mouseWorldPosition, Quaternion.identity);
-                instantiatedIndicator = true;
-            }
-            else
-            {
-                Indicator.transform.position = mouseWorldPosition;
-            }
-            if (Input.GetKey(KeyCode.Space) && Input.GetMouseButtonDown(0))
-            {
-                AssetPose = mouseWorldPosition;
-                AssetRot.Set(0, Camera.main.transform.localRotation.eulerAngles.y, 0);
-                Selector = Instantiate(Prism, AssetPose, Quaternion.Euler(AssetRot));
-                Selector.name = "Prism";
-                Selector.GetComponent<AxisDrag>().enabled = true;
-                instantiatedIndicator = false;
-                Destroy(Indicator);
-                appBar.SetActive(true);
-                
+                float scroll = Input.GetAxis("Mouse ScrollWheel");
+                zDepth += scroll;
+                Vector3 mousePosition = Input.mousePosition;
+                mousePosition.z = zDepth;
+                Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+                if (!instantiatedIndicator)
+                {
+                    Indicator = Instantiate(IndicatorPrefab, mouseWorldPosition, Quaternion.identity);
+                    instantiatedIndicator = true;
+                }
+                else
+                {
+                    Indicator.transform.position = mouseWorldPosition;
+                }
+                if (Input.GetKey(KeyCode.Space) && Input.GetMouseButtonDown(0))
+                {
+                    AssetPose = mouseWorldPosition;
+                    // AssetRot.Set(0, Camera.main.transform.localRotation.eulerAngles.y, 0);
+                    Selector = Instantiate(Prism, AssetPose, Quaternion.identity);
+                    Selector.name = "Prism";
+                    Selector.GetComponent<AxisDrag>().enabled = true;
+                    instantiatedIndicator = false;
+                    Destroy(Indicator);
+                    AddedAsset = true;
+                    appBar.SetActive(true);
+
+                }
             }
         }
 
@@ -329,11 +334,20 @@ public class FingerPose : MonoBehaviour
 
     }
 
-    public void hideAxes()
+    public void setAxes(bool state)
     {
-        Selector.GetComponent<AxisDrag>().xArrow.SetActive(false);
-        Selector.GetComponent<AxisDrag>().yArrow.SetActive(false);
-        Selector.GetComponent<AxisDrag>().zArrow.SetActive(false);
+        Selector.GetComponent<AxisDrag>().enabled = state;
+        Selector.GetComponent<AxisDrag>().xArrow.SetActive(state);
+        Selector.GetComponent<AxisDrag>().yArrow.SetActive(state);
+        Selector.GetComponent<AxisDrag>().zArrow.SetActive(state);
+    }
+
+    public void deleteAxes()
+    {
+        Destroy(Selector.GetComponent<AxisDrag>().xArrow);
+        Destroy(Selector.GetComponent<AxisDrag>().yArrow);
+        Destroy(Selector.GetComponent<AxisDrag>().zArrow);
+        Selector.GetComponent<AxisDrag>().enabled = false;
     }
 
     public void abortSelector()
@@ -343,6 +357,7 @@ public class FingerPose : MonoBehaviour
         doneInstantiation = false;
         if (AddingAssets)
         {
+            AddedAsset = false;
             _inputActionHandler.enabled = true;
         }
         else if (VuforiaEnabled)
@@ -362,6 +377,7 @@ public class FingerPose : MonoBehaviour
             _MinecraftBuilder.AddedVoxelByte.Clear();
             Debug.Log("NOW VOXELIZE ASSET!");
             officialVoxelizer();
+            AddedAsset = false;
             _RosPublisher.PublishEditedPointCloudMsg();
             _RosPublisher.LabelPublisher();
         }
