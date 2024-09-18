@@ -32,6 +32,6 @@ public class MenuPlacement : MonoBehaviour
         transform.rotation = Quaternion.Euler(eulerRotation);
 
         
-        transform.Rotate(30, 180, 0);
+        transform.Rotate(0, 180, 0);
     }
 }
