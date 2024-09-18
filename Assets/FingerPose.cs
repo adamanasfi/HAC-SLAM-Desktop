@@ -112,6 +112,7 @@ public class FingerPose : MonoBehaviour
                         //selectorInstantiated = false;
                         appBar.SetActive(true);
                         Selector.GetComponent<AxisDrag>().enabled = true;
+                        Selector.GetComponent<RotateWithCircles>().enabled = true;
                     }
                     
 
@@ -187,6 +188,7 @@ public class FingerPose : MonoBehaviour
                     Selector = Instantiate(Prism, AssetPose, Quaternion.identity);
                     Selector.name = "Prism";
                     Selector.GetComponent<AxisDrag>().enabled = true;
+                    Selector.GetComponent<RotateWithCircles>().enabled = true;
                     instantiatedIndicator = false;
                     Destroy(Indicator);
                     AddedAsset = true;
@@ -340,6 +342,10 @@ public class FingerPose : MonoBehaviour
         Selector.GetComponent<AxisDrag>().xArrow.SetActive(state);
         Selector.GetComponent<AxisDrag>().yArrow.SetActive(state);
         Selector.GetComponent<AxisDrag>().zArrow.SetActive(state);
+        Selector.GetComponent<RotateWithCircles>().enabled = state;
+        Selector.GetComponent<RotateWithCircles>().xCircle.SetActive(state);
+        Selector.GetComponent<RotateWithCircles>().yCircle.SetActive(state);
+        Selector.GetComponent<RotateWithCircles>().zCircle.SetActive(state);
     }
 
     public void deleteAxes()
@@ -347,7 +353,11 @@ public class FingerPose : MonoBehaviour
         Destroy(Selector.GetComponent<AxisDrag>().xArrow);
         Destroy(Selector.GetComponent<AxisDrag>().yArrow);
         Destroy(Selector.GetComponent<AxisDrag>().zArrow);
+        Destroy(Selector.GetComponent<RotateWithCircles>().xCircle);
+        Destroy(Selector.GetComponent<RotateWithCircles>().yCircle);
+        Destroy(Selector.GetComponent<RotateWithCircles>().zCircle);
         Selector.GetComponent<AxisDrag>().enabled = false;
+        Selector.GetComponent<RotateWithCircles>().enabled = false;
     }
 
     public void abortSelector()

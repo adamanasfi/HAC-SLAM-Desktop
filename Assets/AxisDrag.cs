@@ -5,6 +5,7 @@ public class AxisDrag : MonoBehaviour
     private bool isDraggingX = false;
     private bool isDraggingY = false;
     private bool isDraggingZ = false;
+    private LayerMask axisLayer;
     private Vector3 dragStartPosition;
     private Camera mainCamera;
     public GameObject xArrow;
@@ -12,11 +13,12 @@ public class AxisDrag : MonoBehaviour
     public GameObject zArrow;
     public GameObject arrowPrefab;
     Vector3 x_center, y_center, z_center;
-    Quaternion x_rotation, y_rotation, z_rotation;
 
 
     void Start()
     {
+        axisLayer = LayerMask.NameToLayer("axes");
+        if (axisLayer == -1) Debug.Log("NO AXES LAYER!");
         mainCamera = Camera.main;
         xArrow = Instantiate(arrowPrefab,Vector3.zero, Quaternion.identity);
         yArrow = Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
@@ -57,6 +59,12 @@ public class AxisDrag : MonoBehaviour
         // for z
         z_center = transform.position + zArrow.transform.forward * (0.5f);
         zArrow.transform.position = z_center;
+
+        xArrow.transform.forward = transform.right;
+        yArrow.transform.forward = transform.up;
+        zArrow.transform.forward = transform.forward;
+
+
         // Handle mouse input
         if (Input.GetMouseButtonDown(0))
         {
@@ -64,7 +72,7 @@ public class AxisDrag : MonoBehaviour
             RaycastHit hit;
 
             // Check if clicking near any axis
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit,Mathf.Infinity,1 << axisLayer))
             {
                 float axisThreshold = 0.2f;
 
@@ -129,7 +137,6 @@ public class AxisDrag : MonoBehaviour
             // Project displacement onto the axis
             float movement = Vector3.Dot(displacement, axis.normalized);
             transform.position += axis.normalized * movement;
-
             dragStartPosition = hitPoint;
         }
     }
