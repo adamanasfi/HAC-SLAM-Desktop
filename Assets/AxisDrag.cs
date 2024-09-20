@@ -15,7 +15,7 @@ public class AxisDrag : MonoBehaviour
     Vector3 x_center, y_center, z_center;
 
 
-    void Start()
+    void OnEnable()
     {
         axisLayer = LayerMask.NameToLayer("axes");
         if (axisLayer == -1) Debug.Log("NO AXES LAYER!");

@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 7300324133588660244}
   - component: {fileID: -5719489996133020580}
   - component: {fileID: 5288293517414153092}
+  - component: {fileID: -9220570450674009009}
   m_Layer: 0
   m_Name: Dolly1
   m_TagString: Untagged
@@ -209,3 +210,19 @@ MonoBehaviour:
   xCircle: {fileID: 0}
   yCircle: {fileID: 0}
   zCircle: {fileID: 0}
+--- !u!114 &-9220570450674009009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8527610874166141783}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbedfd138c3d2e143b217e0cd0048238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  xArrow: {fileID: 0}
+  yArrow: {fileID: 0}
+  zArrow: {fileID: 0}
+  arrowPrefab: {fileID: 4488443073500907372, guid: 3eb03d503da70a54dbb6e837d81ca135, type: 3}

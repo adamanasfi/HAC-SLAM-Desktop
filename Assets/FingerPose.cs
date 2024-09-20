@@ -11,6 +11,7 @@ public class FingerPose : MonoBehaviour
 {
     bool AddedAsset;
     public GameObject IndicatorPrefab, Indicator;
+    public GameObject AddVoxelsMenu, DeleteVoxelsMenu, AddAssetsMenu, AdjustConfirmAbortMenu;
     bool instantiatedIndicator;
     float zDepth;
     Vector3 InitialPose, FinalPose, PrismCenter, Scale_incubes, AssetPose, AssetRot;
@@ -83,6 +84,7 @@ public class FingerPose : MonoBehaviour
             {
                 if (selectorInstantiated)
                 {
+                    Debug.Log("DRAWING CUBE");
                     //Update size of selector
                     Vector3 mousePosition = Input.mousePosition;
                     mousePosition.z = zDepth;
@@ -110,9 +112,9 @@ public class FingerPose : MonoBehaviour
                         //selectorInstantiated = false; // this should happen in the else of doneInstantiation
                         doneInstantiation = true;
                         //selectorInstantiated = false;
-                        appBar.SetActive(true);
-                        Selector.GetComponent<AxisDrag>().enabled = true;
-                        Selector.GetComponent<RotateWithCircles>().enabled = true;
+                        if (DeletingVoxels) DeleteVoxelsMenu.SetActive(false);
+                        else AddVoxelsMenu.SetActive(false);
+                        AdjustConfirmAbortMenu.SetActive(true);
                     }
                     
 
@@ -131,7 +133,7 @@ public class FingerPose : MonoBehaviour
                     {
                         Indicator.transform.position = mouseWorldPosition;
                     }
-                    Debug.Log("Waiting For Instantiation");
+                    
 
                     if (Input.GetKey(KeyCode.Space) && Input.GetMouseButtonDown(0))
                     {
@@ -187,12 +189,11 @@ public class FingerPose : MonoBehaviour
                     // AssetRot.Set(0, Camera.main.transform.localRotation.eulerAngles.y, 0);
                     Selector = Instantiate(Prism, AssetPose, Quaternion.identity);
                     Selector.name = "Prism";
-                    Selector.GetComponent<AxisDrag>().enabled = true;
-                    Selector.GetComponent<RotateWithCircles>().enabled = true;
                     instantiatedIndicator = false;
                     Destroy(Indicator);
+                    AddAssetsMenu.SetActive(false);
+                    AdjustConfirmAbortMenu.SetActive(true);
                     AddedAsset = true;
-                    appBar.SetActive(true);
 
                 }
             }
@@ -342,6 +343,20 @@ public class FingerPose : MonoBehaviour
         Selector.GetComponent<AxisDrag>().xArrow.SetActive(state);
         Selector.GetComponent<AxisDrag>().yArrow.SetActive(state);
         Selector.GetComponent<AxisDrag>().zArrow.SetActive(state);
+
+    }
+
+    public void setAxesGlobal(bool state)
+    {
+        Selector.GetComponent<AxisDragGlobal>().enabled = state;
+        Selector.GetComponent<AxisDragGlobal>().xArrow.SetActive(state);
+        Selector.GetComponent<AxisDragGlobal>().yArrow.SetActive(state);
+        Selector.GetComponent<AxisDragGlobal>().zArrow.SetActive(state);
+
+    }
+
+    public void setCircles(bool state)
+    {
         Selector.GetComponent<RotateWithCircles>().enabled = state;
         Selector.GetComponent<RotateWithCircles>().xCircle.SetActive(state);
         Selector.GetComponent<RotateWithCircles>().yCircle.SetActive(state);
@@ -353,10 +368,22 @@ public class FingerPose : MonoBehaviour
         Destroy(Selector.GetComponent<AxisDrag>().xArrow);
         Destroy(Selector.GetComponent<AxisDrag>().yArrow);
         Destroy(Selector.GetComponent<AxisDrag>().zArrow);
+        Selector.GetComponent<AxisDrag>().enabled = false;
+    }
+
+    public void deleteAxesGlobal()
+    {
+        Destroy(Selector.GetComponent<AxisDragGlobal>().xArrow);
+        Destroy(Selector.GetComponent<AxisDragGlobal>().yArrow);
+        Destroy(Selector.GetComponent<AxisDragGlobal>().zArrow);
+        Selector.GetComponent<AxisDragGlobal>().enabled = false;
+    }
+
+    public void deleteCircles()
+    {
         Destroy(Selector.GetComponent<RotateWithCircles>().xCircle);
         Destroy(Selector.GetComponent<RotateWithCircles>().yCircle);
         Destroy(Selector.GetComponent<RotateWithCircles>().zCircle);
-        Selector.GetComponent<AxisDrag>().enabled = false;
         Selector.GetComponent<RotateWithCircles>().enabled = false;
     }
 
@@ -367,6 +394,7 @@ public class FingerPose : MonoBehaviour
         doneInstantiation = false;
         if (AddingAssets)
         {
+            AddAssetsMenu.SetActive(true);
             AddedAsset = false;
             _inputActionHandler.enabled = true;
         }
@@ -375,12 +403,21 @@ public class FingerPose : MonoBehaviour
             VuforiaFound = false;
             ModelTarget.SetActive(false);
         }
+        else if (DeletingVoxels)
+        {
+            DeleteVoxelsMenu.SetActive(true);
+        }
+        else // Adding Voxels
+        {
+            AddVoxelsMenu.SetActive(true);
+        }
     }
 
     public void confirmSelector()
     {
         if (AddingAssets)
         {
+            AddAssetsMenu.SetActive(true);
             // _inputActionHandler.enabled = true;      NO NEED ON DESKTOP
             AssetInstance = Labeler.AssetInstance(AssetLabel);
             Labeler.AssetToolTip(Selector.transform.position, AssetName, AssetLabel, AssetInstance);
@@ -394,6 +431,7 @@ public class FingerPose : MonoBehaviour
 
         else if (DeletingVoxels)
         {
+            DeleteVoxelsMenu.SetActive(true);
             _MinecraftBuilder.DeletedVoxelByte.Clear();
             officialVoxelizer();
             _RosPublisher.PublishDeletedVoxels();
@@ -415,6 +453,7 @@ public class FingerPose : MonoBehaviour
         }
         else
         {
+            AddVoxelsMenu.SetActive(true);
             _MinecraftBuilder.AddedVoxelByte.Clear();
             officialVoxelizer();
             _RosPublisher.PublishEditedPointCloudMsg();
@@ -442,6 +481,7 @@ public class FingerPose : MonoBehaviour
 
     public void requestSelectorShape(int index)
     {
+        Debug.Log("CHANGING SHAPE");
         Prism = Selectors[index];
         _meshCollider = Selectors[index].GetComponent<MeshCollider>();
         _meshCollider.convex = ConvexityState;

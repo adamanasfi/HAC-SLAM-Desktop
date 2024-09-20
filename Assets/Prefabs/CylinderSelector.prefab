@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 2044056066035191321}
   - component: {fileID: -2361581421786453248}
   - component: {fileID: 5682889962377919682}
+  - component: {fileID: -2908954344977026982}
   m_Layer: 0
   m_Name: CylinderSelector
   m_TagString: Untagged
@@ -272,3 +273,19 @@ MonoBehaviour:
   xCircle: {fileID: 0}
   yCircle: {fileID: 0}
   zCircle: {fileID: 0}
+--- !u!114 &-2908954344977026982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6027954737431174120}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbedfd138c3d2e143b217e0cd0048238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  xArrow: {fileID: 0}
+  yArrow: {fileID: 0}
+  zArrow: {fileID: 0}
+  arrowPrefab: {fileID: 4488443073500907372, guid: 3eb03d503da70a54dbb6e837d81ca135, type: 3}

@@ -12,6 +12,7 @@ using System;
 public class LabelerFingerPose : MonoBehaviour
 {
     public GameObject IndicatorPrefab, Indicator;
+    public GameObject EditorMenu;
     bool instantiatedIndicator;
     float zDepth;
     bool labelerOn, doneInstantiation, trackingLost, selectorInstantiated, fingersClosed, HandAngle,ToolTextBool;

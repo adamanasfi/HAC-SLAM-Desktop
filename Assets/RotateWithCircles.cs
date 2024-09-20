@@ -10,7 +10,7 @@ public class RotateWithCircles : MonoBehaviour
     private bool rotatingX, rotatingY, rotatingZ;
     private Vector3 lastMousePosition;
 
-    void Start()
+    void OnEnable()
     {
         circlesLayer = LayerMask.NameToLayer("circles");
         if (circlesLayer == -1) Debug.Log("NO CIRCLES LAYER!");
@@ -28,14 +28,14 @@ public class RotateWithCircles : MonoBehaviour
         zCircle = Instantiate(circlePrefab, Vector3.zero, Quaternion.identity);
         zCircle.tag = "ZCircle";
 
-        xCircle.transform.forward = transform.up;
+        xCircle.transform.forward = Vector3.up;
         xCircle.transform.Rotate(0, 0, 90);
         
 
-        yCircle.transform.forward = transform.right;
+        yCircle.transform.forward = Vector3.right;
        
 
-        zCircle.transform.forward = transform.up;
+        zCircle.transform.forward = Vector3.up;
         
 
         // for x
@@ -57,8 +57,12 @@ public class RotateWithCircles : MonoBehaviour
     void Update()
     {
         xCircle.transform.position = transform.position;
+
         yCircle.transform.position = transform.position;
+
         zCircle.transform.position = transform.position;
+
+
         // On mouse down, check if a circle is clicked
         if (Input.GetMouseButtonDown(0))
         {
@@ -67,20 +71,20 @@ public class RotateWithCircles : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << circlesLayer))
             {
-                Debug.Log("HIT!");
+                
                 if (hit.collider.CompareTag("XCircle"))
                 {
-                    Debug.Log("XCIRCLE!!!!!!!!!!");
+                    
                     rotatingX = true;
                 }
                 if (hit.collider.CompareTag("YCircle"))
                 {
-                    Debug.Log("YCIRCLE!!!!!!!!!!");
+                    
                     rotatingY = true;
                 }
                 if (hit.collider.CompareTag("ZCircle"))
                 {
-                    Debug.Log("ZCIRCLE!!!!!!!!!!");
+                    
                     rotatingZ = true;
                 }
 

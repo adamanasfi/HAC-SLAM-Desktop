@@ -28,6 +28,12 @@ public class ToggleClick : MonoBehaviour
         
     }
 
+    public void CheckState()
+    {
+        if (state) toggleOnEvent.OnToggleOn.Invoke();
+        else toggleOffEvent.OnToggleOff.Invoke();
+    }
+
     void OnMouseDown()
     {
         if (Input.GetMouseButtonDown(0)) // 0 = left mouse button
