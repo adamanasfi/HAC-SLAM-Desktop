@@ -11,6 +11,7 @@ using System;
 
 public class LabelerFingerPose : MonoBehaviour
 {
+    public GameObject BaseMenu, LabelerMenu;
     public GameObject IndicatorPrefab, Indicator;
     public GameObject EditorMenu;
     bool instantiatedIndicator;
@@ -106,9 +107,8 @@ public class LabelerFingerPose : MonoBehaviour
                         //selectorInstantiated = false; // this should happen in the else of doneInstantiation
                         doneInstantiation = true;
                         //selectorInstantiated = false;
-                        appBar.SetActive(true);
-                        Selector.GetComponent<AxisDrag>().enabled = true;
-                        Selector.GetComponent<RotateWithCircles>().enabled = true;
+                        BaseMenu.SetActive(false);
+                        LabelerMenu.SetActive(true);                        
                     }
 
 
@@ -256,24 +256,65 @@ public class LabelerFingerPose : MonoBehaviour
     public void setAxes(bool state)
     {
         Selector.GetComponent<AxisDrag>().enabled = state;
-        Selector.GetComponent<AxisDrag>().xArrow.SetActive(state);
-        Selector.GetComponent<AxisDrag>().yArrow.SetActive(state);
-        Selector.GetComponent<AxisDrag>().zArrow.SetActive(state);
+        if (Selector.GetComponent<AxisDrag>().xArrow != null)
+        {
+            Selector.GetComponent<AxisDrag>().xArrow.SetActive(state);
+            Selector.GetComponent<AxisDrag>().yArrow.SetActive(state);
+            Selector.GetComponent<AxisDrag>().zArrow.SetActive(state);
+        }
+    }
+
+    public void setAxesGlobal(bool state)
+    {
+        Selector.GetComponent<AxisDragGlobal>().enabled = state;
+        if (Selector.GetComponent<AxisDragGlobal>().xArrow != null)
+        {
+            Selector.GetComponent<AxisDragGlobal>().xArrow.SetActive(state);
+            Selector.GetComponent<AxisDragGlobal>().yArrow.SetActive(state);
+            Selector.GetComponent<AxisDragGlobal>().zArrow.SetActive(state);
+        }
+
+    }
+
+    public void setCircles(bool state)
+    {
         Selector.GetComponent<RotateWithCircles>().enabled = state;
-        Selector.GetComponent<RotateWithCircles>().xCircle.SetActive(state);
-        Selector.GetComponent<RotateWithCircles>().yCircle.SetActive(state);
-        Selector.GetComponent<RotateWithCircles>().zCircle.SetActive(state);
+        if (Selector.GetComponent<RotateWithCircles>().xCircle != null)
+        {
+            Selector.GetComponent<RotateWithCircles>().xCircle.SetActive(state);
+            Selector.GetComponent<RotateWithCircles>().yCircle.SetActive(state);
+            Selector.GetComponent<RotateWithCircles>().zCircle.SetActive(state);
+        }
     }
 
     public void deleteAxes()
     {
-        Destroy(Selector.GetComponent<AxisDrag>().xArrow);
-        Destroy(Selector.GetComponent<AxisDrag>().yArrow);
-        Destroy(Selector.GetComponent<AxisDrag>().zArrow);
-        Destroy(Selector.GetComponent<RotateWithCircles>().xCircle);
-        Destroy(Selector.GetComponent<RotateWithCircles>().yCircle);
-        Destroy(Selector.GetComponent<RotateWithCircles>().zCircle);
+        if (Selector.GetComponent<AxisDrag>().xArrow != null) {
+            Destroy(Selector.GetComponent<AxisDrag>().xArrow);
+            Destroy(Selector.GetComponent<AxisDrag>().yArrow);
+            Destroy(Selector.GetComponent<AxisDrag>().zArrow);
+        }
         Selector.GetComponent<AxisDrag>().enabled = false;
+    }
+
+    public void deleteAxesGlobal()
+    {
+        if (Selector.GetComponent<AxisDragGlobal>().xArrow != null)
+        {
+            Destroy(Selector.GetComponent<AxisDragGlobal>().xArrow);
+            Destroy(Selector.GetComponent<AxisDragGlobal>().yArrow);
+            Destroy(Selector.GetComponent<AxisDragGlobal>().zArrow);
+        }
+        Selector.GetComponent<AxisDragGlobal>().enabled = false;
+    }
+
+    public void deleteCircles()
+    {
+        if (Selector.GetComponent<RotateWithCircles>().xCircle != null){
+            Destroy(Selector.GetComponent<RotateWithCircles>().xCircle);
+            Destroy(Selector.GetComponent<RotateWithCircles>().yCircle);
+            Destroy(Selector.GetComponent<RotateWithCircles>().zCircle);
+        }
         Selector.GetComponent<RotateWithCircles>().enabled = false;
     }
 
