@@ -348,6 +348,11 @@ public class FingerPose : MonoBehaviour
         }
     }
 
+    public void allowMotionLocalAxes(bool state)
+    {
+        Selector.GetComponent<AxisDrag>().allowedMotion = state;
+    }
+
     public void setAxesGlobal(bool state)
     {
         Selector.GetComponent<AxisDragGlobal>().enabled = state;
@@ -358,6 +363,11 @@ public class FingerPose : MonoBehaviour
             Selector.GetComponent<AxisDragGlobal>().zArrow.SetActive(state);
         }
 
+    }
+
+    public void allowMotionGloballAxes(bool state)
+    {
+        Selector.GetComponent<AxisDragGlobal>().allowedMotion = state;
     }
 
     public void setCircles(bool state)
@@ -371,8 +381,20 @@ public class FingerPose : MonoBehaviour
         }
     }
 
+    public void setCirclesGlobal(bool state)
+    {
+        Selector.GetComponent<RotateGlobal>().enabled = state;
+        if (Selector.GetComponent<RotateGlobal>().xCircle != null)
+        {
+            Selector.GetComponent<RotateGlobal>().xCircle.SetActive(state);
+            Selector.GetComponent<RotateGlobal>().yCircle.SetActive(state);
+            Selector.GetComponent<RotateGlobal>().zCircle.SetActive(state);
+        }
+    }
+
     public void deleteAxes()
     {
+        Debug.Log("deleting local axes");
         if (Selector.GetComponent<AxisDrag>().xArrow != null)
         {
             Destroy(Selector.GetComponent<AxisDrag>().xArrow);
@@ -384,6 +406,7 @@ public class FingerPose : MonoBehaviour
 
     public void deleteAxesGlobal()
     {
+        Debug.Log("deleting global axes");
         if (Selector.GetComponent<AxisDragGlobal>().xArrow != null)
         {
             Destroy(Selector.GetComponent<AxisDragGlobal>().xArrow);
@@ -395,6 +418,7 @@ public class FingerPose : MonoBehaviour
 
     public void deleteCircles()
     {
+        Debug.Log("deleting local circles");
         if (Selector.GetComponent<RotateWithCircles>().xCircle != null)
         {
             Destroy(Selector.GetComponent<RotateWithCircles>().xCircle);
@@ -402,6 +426,18 @@ public class FingerPose : MonoBehaviour
             Destroy(Selector.GetComponent<RotateWithCircles>().zCircle);
         }
         Selector.GetComponent<RotateWithCircles>().enabled = false;
+    }
+
+    public void deleteCirclesGlobal()
+    {
+        Debug.Log("deleting global circles");
+        if (Selector.GetComponent<RotateGlobal>().xCircle != null)
+        {
+            Destroy(Selector.GetComponent<RotateGlobal>().xCircle);
+            Destroy(Selector.GetComponent<RotateGlobal>().yCircle);
+            Destroy(Selector.GetComponent<RotateGlobal>().zCircle);
+        }
+        Selector.GetComponent<RotateGlobal>().enabled = false;
     }
 
     public void abortSelector()

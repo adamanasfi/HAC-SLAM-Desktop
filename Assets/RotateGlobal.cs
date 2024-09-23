@@ -59,6 +59,8 @@ public class RotateGlobal : MonoBehaviour
         xCircle.transform.position = transform.position;
         yCircle.transform.position = transform.position;
         zCircle.transform.position = transform.position;
+
+
         // On mouse down, check if a circle is clicked
         if (Input.GetMouseButtonDown(0))
         {
@@ -92,9 +94,9 @@ public class RotateGlobal : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             Vector3 delta = Input.mousePosition - lastMousePosition;
-            if (rotatingX) transform.Rotate(Vector3.right, delta.y);
-            if (rotatingY) transform.Rotate(Vector3.up, delta.x);
-            if (rotatingZ) transform.Rotate(Vector3.forward, delta.x);
+            if (rotatingX) transform.Rotate(Vector3.right, delta.y, Space.World);
+            if (rotatingY) transform.Rotate(Vector3.up, delta.x, Space.World);
+            if (rotatingZ) transform.Rotate(Vector3.forward, delta.x, Space.World);
 
             lastMousePosition = Input.mousePosition;
         }
@@ -104,6 +106,7 @@ public class RotateGlobal : MonoBehaviour
         {
             rotatingX = rotatingY = rotatingZ = false;
         }
+        
     }
 }
 

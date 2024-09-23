@@ -62,7 +62,7 @@ public class RotateWithCircles : MonoBehaviour
 
         zCircle.transform.position = transform.position;
 
-
+        
         // On mouse down, check if a circle is clicked
         if (Input.GetMouseButtonDown(0))
         {
@@ -71,20 +71,20 @@ public class RotateWithCircles : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << circlesLayer))
             {
-                
+
                 if (hit.collider.CompareTag("XCircle"))
                 {
-                    
+
                     rotatingX = true;
                 }
                 if (hit.collider.CompareTag("YCircle"))
                 {
-                    
+
                     rotatingY = true;
                 }
                 if (hit.collider.CompareTag("ZCircle"))
                 {
-                    
+
                     rotatingZ = true;
                 }
 
@@ -108,6 +108,7 @@ public class RotateWithCircles : MonoBehaviour
         {
             rotatingX = rotatingY = rotatingZ = false;
         }
+        
     }
 }
 

@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 8400185175586538107}
   - component: {fileID: -3906697859139139855}
   - component: {fileID: -7206596409644937255}
+  - component: {fileID: -1521025291501795984}
   m_Layer: 0
   m_Name: NewSelector3D
   m_TagString: Untagged
@@ -238,7 +239,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 1
+  m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &8400185175586538107
@@ -253,6 +254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95ce0ad9c035a98439d272ebb60033cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allowedMotion: 0
   xArrow: {fileID: 0}
   yArrow: {fileID: 0}
   zArrow: {fileID: 0}
@@ -285,7 +287,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbedfd138c3d2e143b217e0cd0048238, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allowedMotion: 0
   xArrow: {fileID: 0}
   yArrow: {fileID: 0}
   zArrow: {fileID: 0}
   arrowPrefab: {fileID: 4488443073500907372, guid: 3eb03d503da70a54dbb6e837d81ca135, type: 3}
+--- !u!114 &-1521025291501795984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4385382872227521279}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 913f04652e0e4eb4d895de60c8196aba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  circlePrefab: {fileID: 410926998442308623, guid: 09b8f77a80737d242ad5a74f348fd017, type: 3}
+  xCircle: {fileID: 0}
+  yCircle: {fileID: 0}
+  zCircle: {fileID: 0}

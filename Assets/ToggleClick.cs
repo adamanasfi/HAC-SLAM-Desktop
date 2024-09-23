@@ -11,6 +11,7 @@ public class ToggleClick : MonoBehaviour
     private ToggleOnEvents toggleOnEvent;
     private ToggleOffEvents toggleOffEvent;
     bool state;
+    bool StartExecuted = false;
 
     // Start is called before the first frame update
     void Start()
@@ -20,6 +21,7 @@ public class ToggleClick : MonoBehaviour
         toggleOffEvent = button.GetStateEvents<ToggleOffEvents>("ToggleOff");
         state = toggleOnEvent.IsSelectedOnStart;
         Debug.Log(state);
+        StartExecuted = true;
     }
 
     // Update is called once per frame
@@ -30,8 +32,11 @@ public class ToggleClick : MonoBehaviour
 
     public void CheckState()
     {
-        if (state) toggleOnEvent.OnToggleOn.Invoke();
-        else toggleOffEvent.OnToggleOff.Invoke();
+        if (StartExecuted)
+        {
+            if (state) toggleOnEvent.OnToggleOn.Invoke();
+            else toggleOffEvent.OnToggleOff.Invoke();
+        }
     }
 
     void OnMouseDown()

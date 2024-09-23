@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class AxisDragGlobal : MonoBehaviour
 {
+    public bool allowedMotion;
     private bool isDraggingX = false;
     private bool isDraggingY = false;
     private bool isDraggingZ = false;
@@ -64,65 +65,67 @@ public class AxisDragGlobal : MonoBehaviour
         // yArrow.transform.forward = transform.up;
         // zArrow.transform.forward = transform.forward;
 
-
-        // Handle mouse input
-        if (Input.GetMouseButtonDown(0))
+        if (allowedMotion)
         {
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            // Check if clicking near any axis
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << axisLayer))
+            // Handle mouse input
+            if (Input.GetMouseButtonDown(0))
             {
-                float axisThreshold = 0.2f;
+                Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
 
-                // Check for X axis selection
-                if (Vector3.Distance(hit.point, transform.position + Vector3.right) < axisThreshold)
+                // Check if clicking near any axis
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << axisLayer))
                 {
-                    isDraggingX = true;
-                    dragStartPosition = hit.point;
+                    float axisThreshold = 0.2f;
+
+                    // Check for X axis selection
+                    if (Vector3.Distance(hit.point, transform.position + Vector3.right) < axisThreshold)
+                    {
+                        isDraggingX = true;
+                        dragStartPosition = hit.point;
+                    }
+                    // Check for Y axis selection
+                    else if (Vector3.Distance(hit.point, transform.position + Vector3.up) < axisThreshold)
+                    {
+                        isDraggingY = true;
+                        dragStartPosition = hit.point;
+                    }
+                    // Check for Z axis selection
+                    else if (Vector3.Distance(hit.point, transform.position + Vector3.forward) < axisThreshold)
+                    {
+                        isDraggingZ = true;
+                        dragStartPosition = hit.point;
+                    }
                 }
-                // Check for Y axis selection
-                else if (Vector3.Distance(hit.point, transform.position + Vector3.up) < axisThreshold)
+            }
+
+            if (Input.GetMouseButton(0))
+            {
+                Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+                Plane plane;
+
+                if (isDraggingX)
                 {
-                    isDraggingY = true;
-                    dragStartPosition = hit.point;
+                    plane = new Plane(Vector3.up, transform.position); // Movement plane perpendicular to Y axis
+                    MoveAlongAxis(ray, plane, Vector3.right);
                 }
-                // Check for Z axis selection
-                else if (Vector3.Distance(hit.point, transform.position + Vector3.forward) < axisThreshold)
+                else if (isDraggingY)
                 {
-                    isDraggingZ = true;
-                    dragStartPosition = hit.point;
+                    plane = new Plane(Vector3.right, transform.position); // Movement plane perpendicular to X axis
+                    MoveAlongAxis(ray, plane, Vector3.up);
+                }
+                else if (isDraggingZ)
+                {
+                    plane = new Plane(Vector3.up, transform.position); // Movement plane perpendicular to Y axis
+                    MoveAlongAxis(ray, plane, Vector3.forward);
                 }
             }
-        }
 
-        if (Input.GetMouseButton(0))
-        {
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            Plane plane;
-
-            if (isDraggingX)
+            if (Input.GetMouseButtonUp(0))
             {
-                plane = new Plane(Vector3.up, transform.position); // Movement plane perpendicular to Y axis
-                MoveAlongAxis(ray, plane, Vector3.right);
+                // Stop dragging when mouse is released
+                isDraggingX = isDraggingY = isDraggingZ = false;
             }
-            else if (isDraggingY)
-            {
-                plane = new Plane(Vector3.right, transform.position); // Movement plane perpendicular to X axis
-                MoveAlongAxis(ray, plane, Vector3.up);
-            }
-            else if (isDraggingZ)
-            {
-                plane = new Plane(Vector3.up, transform.position); // Movement plane perpendicular to Y axis
-                MoveAlongAxis(ray, plane, Vector3.forward);
-            }
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            // Stop dragging when mouse is released
-            isDraggingX = isDraggingY = isDraggingZ = false;
         }
     }
 

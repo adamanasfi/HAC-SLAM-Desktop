@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 604434511870044077}
   - component: {fileID: 6386880106249465456}
   - component: {fileID: 3238720915792693008}
+  - component: {fileID: 7394939306092957076}
   m_Layer: 0
   m_Name: iw.hub
   m_TagString: Untagged
@@ -194,6 +195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95ce0ad9c035a98439d272ebb60033cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allowedMotion: 0
   xArrow: {fileID: 0}
   yArrow: {fileID: 0}
   zArrow: {fileID: 0}
@@ -226,7 +228,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbedfd138c3d2e143b217e0cd0048238, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allowedMotion: 0
   xArrow: {fileID: 0}
   yArrow: {fileID: 0}
   zArrow: {fileID: 0}
   arrowPrefab: {fileID: 4488443073500907372, guid: 3eb03d503da70a54dbb6e837d81ca135, type: 3}
+--- !u!114 &7394939306092957076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4130489786689630051}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 913f04652e0e4eb4d895de60c8196aba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  circlePrefab: {fileID: 410926998442308623, guid: 09b8f77a80737d242ad5a74f348fd017, type: 3}
+  xCircle: {fileID: 0}
+  yCircle: {fileID: 0}
+  zCircle: {fileID: 0}
