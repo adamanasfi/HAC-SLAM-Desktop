@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 6386880106249465456}
   - component: {fileID: 3238720915792693008}
   - component: {fileID: 7394939306092957076}
+  - component: {fileID: -2830593964804011314}
   m_Layer: 0
   m_Name: iw.hub
   m_TagString: Untagged
@@ -249,3 +250,20 @@ MonoBehaviour:
   xCircle: {fileID: 0}
   yCircle: {fileID: 0}
   zCircle: {fileID: 0}
+--- !u!114 &-2830593964804011314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4130489786689630051}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd264fdf19aaf8a4f93678ddd049ea58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleSpeed: 0.1
+  xArrow: {fileID: 0}
+  yArrow: {fileID: 0}
+  zArrow: {fileID: 0}
+  arrowPrefab: {fileID: 4488443073500907372, guid: 3eb03d503da70a54dbb6e837d81ca135, type: 3}

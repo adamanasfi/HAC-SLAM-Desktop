@@ -370,6 +370,17 @@ public class FingerPose : MonoBehaviour
         Selector.GetComponent<AxisDragGlobal>().allowedMotion = state;
     }
 
+    public void setScaleAxes(bool state)
+    {
+        Selector.GetComponent<ScaleWithAxes>().enabled = state;
+        if (Selector.GetComponent<ScaleWithAxes>().xArrow != null)
+        {
+            Selector.GetComponent<ScaleWithAxes>().xArrow.SetActive(state);
+            Selector.GetComponent<ScaleWithAxes>().yArrow.SetActive(state);
+            Selector.GetComponent<ScaleWithAxes>().zArrow.SetActive(state);
+        }
+    }
+
     public void setCircles(bool state)
     {
         Selector.GetComponent<RotateWithCircles>().enabled = state;
@@ -414,6 +425,18 @@ public class FingerPose : MonoBehaviour
             Destroy(Selector.GetComponent<AxisDragGlobal>().zArrow);
         }
         Selector.GetComponent<AxisDragGlobal>().enabled = false;
+    }
+
+    public void deleteScaleAxes()
+    {
+        Debug.Log("deleting scale axes");
+        if (Selector.GetComponent<ScaleWithAxes>().xArrow != null)
+        {
+            Destroy(Selector.GetComponent<ScaleWithAxes>().xArrow);
+            Destroy(Selector.GetComponent<ScaleWithAxes>().yArrow);
+            Destroy(Selector.GetComponent<ScaleWithAxes>().zArrow);
+        }
+        Selector.GetComponent<ScaleWithAxes>().enabled = false;
     }
 
     public void deleteCircles()
