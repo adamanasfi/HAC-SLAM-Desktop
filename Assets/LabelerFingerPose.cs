@@ -319,6 +319,11 @@ public class LabelerFingerPose : MonoBehaviour
         }
     }
 
+    public void allowMotionGlobalCircles(bool state)
+    {
+        Selector.GetComponent<RotateGlobal>().allowedMotion = state;
+    }
+
 
 
     public void deleteAxes()

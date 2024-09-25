@@ -403,6 +403,11 @@ public class FingerPose : MonoBehaviour
         }
     }
 
+    public void allowMotionGlobalCircles(bool state)
+    {
+        Selector.GetComponent<RotateGlobal>().allowedMotion = state;
+    }
+
     public void deleteAxes()
     {
         Debug.Log("deleting local axes");
