@@ -40,17 +40,20 @@ public class RotateGlobal : MonoBehaviour
 
         // for x
         xCircle.transform.position = transform.position;
-        Renderer x_renderer = xCircle.GetComponent<Renderer>();
+        Transform x_child = xCircle.transform.Find("default");
+        Renderer x_renderer = x_child.GetComponent<Renderer>();
         x_renderer.material.color = Color.red;
 
         // for y
         yCircle.transform.position = transform.position;
-        Renderer y_renderer = yCircle.GetComponent<Renderer>();
+        Transform y_child = yCircle.transform.Find("default");
+        Renderer y_renderer = y_child.GetComponent<Renderer>();
         y_renderer.material.color = Color.green;
 
         // for z
         zCircle.transform.position = transform.position;
-        Renderer z_renderer = zCircle.GetComponent<Renderer>();
+        Transform z_child = zCircle.transform.Find("default");
+        Renderer z_renderer = z_child.GetComponent<Renderer>();
         z_renderer.material.color = Color.blue;
     }
 
