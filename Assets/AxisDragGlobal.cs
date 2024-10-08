@@ -21,29 +21,39 @@ public class AxisDragGlobal : MonoBehaviour
         axisLayer = LayerMask.NameToLayer("axes");
         if (axisLayer == -1) Debug.Log("NO AXES LAYER!");
         mainCamera = Camera.main;
-        xArrow = Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
-        yArrow = Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
-        zArrow = Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
+        if (xArrow == null)
+        {
+            xArrow = Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
+            xArrow.tag = "XArrow";
+            yArrow = Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
+            yArrow.tag = "YArrow";
+            zArrow = Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
+            zArrow.tag = "ZArrow";
+            Renderer x_renderer = xArrow.GetComponent<Renderer>();
+            x_renderer.material.color = Color.red;
+            Renderer y_renderer = yArrow.GetComponent<Renderer>();
+            y_renderer.material.color = Color.green;
+            Renderer z_renderer = zArrow.GetComponent<Renderer>();
+            z_renderer.material.color = Color.blue;
+        }
+
         xArrow.transform.forward = Vector3.right;
         yArrow.transform.forward = Vector3.up;
         zArrow.transform.forward = Vector3.forward;
         // for x
         x_center = transform.position + xArrow.transform.forward * (0.5f);
         xArrow.transform.position = x_center;
-        Renderer x_renderer = xArrow.GetComponent<Renderer>();
-        x_renderer.material.color = Color.red;
+
 
         // for y
         y_center = transform.position + yArrow.transform.forward * (0.5f);
         yArrow.transform.position = y_center;
-        Renderer y_renderer = yArrow.GetComponent<Renderer>();
-        y_renderer.material.color = Color.green;
+
 
         // for z
         z_center = transform.position + zArrow.transform.forward * (0.5f);
         zArrow.transform.position = z_center;
-        Renderer z_renderer = zArrow.GetComponent<Renderer>();
-        z_renderer.material.color = Color.blue;
+
 
     }
 
@@ -76,22 +86,20 @@ public class AxisDragGlobal : MonoBehaviour
                 // Check if clicking near any axis
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << axisLayer))
                 {
-                    float axisThreshold = 0.2f;
-
                     // Check for X axis selection
-                    if (Vector3.Distance(hit.point, transform.position + Vector3.right) < axisThreshold)
+                    if (hit.collider.CompareTag("XArrow"))
                     {
                         isDraggingX = true;
                         dragStartPosition = hit.point;
                     }
                     // Check for Y axis selection
-                    else if (Vector3.Distance(hit.point, transform.position + Vector3.up) < axisThreshold)
+                    else if (hit.collider.CompareTag("YArrow"))
                     {
                         isDraggingY = true;
                         dragStartPosition = hit.point;
                     }
                     // Check for Z axis selection
-                    else if (Vector3.Distance(hit.point, transform.position + Vector3.forward) < axisThreshold)
+                    else if (hit.collider.CompareTag("ZArrow"))
                     {
                         isDraggingZ = true;
                         dragStartPosition = hit.point;

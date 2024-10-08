@@ -17,27 +17,36 @@ public class ScaleWithAxes : MonoBehaviour
     {
         axisLayer = LayerMask.NameToLayer("axes");
         if (axisLayer == -1) Debug.Log("NO AXES LAYER!");
-
-        xArrow = Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
-        yArrow = Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
-        zArrow = Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
+        if (xArrow == null)
+        {
+            xArrow = Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
+            xArrow.tag = "XArrow";
+            yArrow = Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
+            yArrow.tag = "YArrow";
+            zArrow = Instantiate(arrowPrefab, Vector3.zero, Quaternion.identity);
+            zArrow.tag = "ZArrow";
+            Renderer x_renderer = xArrow.GetComponent<Renderer>();
+            x_renderer.material.color = Color.red;
+            Renderer y_renderer = yArrow.GetComponent<Renderer>();
+            y_renderer.material.color = Color.green;
+            Renderer z_renderer = zArrow.GetComponent<Renderer>();
+            z_renderer.material.color = Color.blue;
+        }
 
         xArrow.transform.forward = transform.right;
         yArrow.transform.forward = transform.up;
         zArrow.transform.forward = transform.forward;
 
-        // Set up arrow positions and colors
-        SetupArrow(xArrow, transform.right, Color.red);
-        SetupArrow(yArrow, transform.up, Color.green);
-        SetupArrow(zArrow, transform.forward, Color.blue);
+        // Set up arrow positions
+        SetupArrow(xArrow, transform.right);
+        SetupArrow(yArrow, transform.up);
+        SetupArrow(zArrow, transform.forward);
     }
 
-    private void SetupArrow(GameObject arrow, Vector3 direction, Color color)
+    private void SetupArrow(GameObject arrow, Vector3 direction)
     {
         Vector3 center = transform.position + direction * 0.5f;
         arrow.transform.position = center;
-        Renderer renderer = arrow.GetComponent<Renderer>();
-        renderer.material.color = color;
     }
 
     void Update()
@@ -59,20 +68,18 @@ public class ScaleWithAxes : MonoBehaviour
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << axisLayer))
-            {
-                float axisThreshold = 0.2f;
-                
-                if (Vector3.Distance(hit.point, transform.position + transform.right) < axisThreshold)
+            {   
+                if (hit.collider.CompareTag("XArrow"))
                 {
                     draggingX = true;
                     dragStartWorld = hit.point;
                 }
-                else if (Vector3.Distance(hit.point, transform.position + transform.up) < axisThreshold)
+                else if (hit.collider.CompareTag("YArrow"))
                 {
                     draggingY = true;
                     dragStartWorld = hit.point;
                 }
-                else if (Vector3.Distance(hit.point, transform.position + transform.forward) < axisThreshold)
+                else if (hit.collider.CompareTag("ZArrow"))
                 {
                     draggingZ = true;
                     dragStartWorld = hit.point;

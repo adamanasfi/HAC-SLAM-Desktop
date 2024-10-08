@@ -7,6 +7,9 @@ TagManager:
   - XCircle
   - YCircle
   - ZCircle
+  - XArrow
+  - YArrow
+  - ZArrow
   layers:
   - Default
   - TransparentFX
@@ -14,13 +17,13 @@ TagManager:
   - 
   - Water
   - UI
+  - axesLocal
+  - circlesLocal
+  - circlesGlobal
+  - axesGlobal
+  - axesScale
   - axes
   - circles
-  - 
-  - 
-  - 
-  - 
-  - 
   - 
   - 
   - 

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 9133260726561306017}
   - component: {fileID: 6226494086075141355}
   - component: {fileID: 7443686301866879103}
-  m_Layer: 7
+  m_Layer: 12
   m_Name: default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8561316568468505849}
   - component: {fileID: 1627717380085097417}
-  m_Layer: 7
+  m_Layer: 12
   m_Name: modified_torus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
