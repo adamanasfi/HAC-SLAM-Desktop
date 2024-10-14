@@ -46,8 +46,9 @@ public class MergedVoxelDisplay : MonoBehaviour
             cubePose.x = System.BitConverter.ToSingle(pointcloud.data, j);
             cubePose.z = System.BitConverter.ToSingle(pointcloud.data, j + 4);
             cubePose.y = System.BitConverter.ToSingle(pointcloud.data, j + 8);
-            transformed = mcb.TransformPCL(Camera.main.transform.localPosition);
-            if (Vector3.Distance(cubePose,transformed) < 30)
+            mcb.VoxelizePointCloud(cubePose);
+            // transformed = mcb.TransformPCL(Camera.main.transform.localPosition);
+/*            if (Vector3.Distance(cubePose, transformed) < 30)
             {
                 kuby = Instantiate(cubz, cubePose, Quaternion.identity);
                 kuby.transform.SetParent(Parent.transform, false);
@@ -59,7 +60,7 @@ public class MergedVoxelDisplay : MonoBehaviour
                     Debug.Log("Oui");
                 }
 
-            }
+            }*/
 
             
 
@@ -75,9 +76,6 @@ public class MergedVoxelDisplay : MonoBehaviour
         Debug.Log("Done");
         //this.transform.rotation = Quaternion.Euler(rx, ry, rz);
         //this.transform.position = new Vector3(x, y, z);
-
-
-
     }
 
 
@@ -106,8 +104,6 @@ public class MergedVoxelDisplay : MonoBehaviour
         Parent.transform.position = Vector3.zero;
         Parent.transform.Rotate(new Vector3(0, ry, 0), Space.Self);
         Parent.transform.Translate(new Vector3(x, y, z), Space.Self);
-        
-        
         Clean();
         FillIncomingCoroutine = StartCoroutine(FillIncoming(Sub.incomingPointCloudLive));
     }

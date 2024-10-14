@@ -301,7 +301,7 @@ public class FingerPose : MonoBehaviour
                 for (int k = minbound_inCubes.z; k <= maxbound_inCubes.z; k++)
                 {
                     coliderPose.Set(i, j, k);
-                    coliderPose = coliderPose * cubesize;
+                    coliderPose = coliderPose * cubesize; // converting to world coordinates
 
                     overlaps = Physics.OverlapBox(coliderPose, cubesizeScale / 2);
                     if (overlaps != null)
@@ -324,7 +324,8 @@ public class FingerPose : MonoBehaviour
                                 }
                                 else
                                 {
-                                    _MinecraftBuilder.UserVoxelAddition(coliderPose);
+                                    // passing every voxel center in the prism as an argument
+                                    _MinecraftBuilder.UserVoxelAddition(coliderPose); 
                                 }
                                 break;
                             }

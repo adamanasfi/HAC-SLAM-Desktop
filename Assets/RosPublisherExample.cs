@@ -40,6 +40,7 @@ public class RosPublisherExample : MonoBehaviour
     string localizeHumanTopic = "/human/localize";
     string DeleteLabelTopic = "/human/delete_label";
     string DeleteInstanceTopic = "/human/delete_instance";
+    string groundTruthTopic = "/groundTruth";
     //Texture2D image; //For FSLAM. To be tried later
 
     float publishMessageFrequency = 3f;
@@ -60,6 +61,7 @@ public class RosPublisherExample : MonoBehaviour
     pc2.PointCloud2Msg pc2e;
     pc2.PointCloud2Msg pc2d;
     pc2.PointCloud2Msg pc2l;
+    pc2.PointCloud2Msg pc2g;
     GeometryMsgs.TwistMsg twist;
     GeometryMsgs.TwistMsg robot_twist;
     _int.Int16Msg intRequest, deleteLabel;
@@ -90,7 +92,7 @@ public class RosPublisherExample : MonoBehaviour
         ros.RegisterPublisher<pc2.PointCloud2Msg>(topicName5);
         ros.RegisterPublisher<pc2.PointCloud2Msg>(topicName6);
         ros.RegisterPublisher<pc2.PointCloud2Msg>(topicName7);
-
+        ros.RegisterPublisher<pc2.PointCloud2Msg>(groundTruthTopic);
         // This is not initialized on ros tcp. Wait for malak
         ros.RegisterPublisher<transformer.TransformationMsg>(topicName8);
 
@@ -137,6 +139,25 @@ public class RosPublisherExample : MonoBehaviour
 
         newTwist = new transformer.TransformationMsg();
 
+        // for edited ground truth point cloud
+        pc2g = new pc2.PointCloud2Msg();
+        pc2g.header.frame_id = "map";
+        pc2g.header.stamp.nanosec = 2;
+        pc2g.fields = new pc2.PointFieldMsg[]
+        {
+            new pc2.PointFieldMsg { name = "x", offset = 0, datatype = pc2.PointFieldMsg.FLOAT32, count = 1 },
+            new pc2.PointFieldMsg { name = "y", offset = 4, datatype = pc2.PointFieldMsg.FLOAT32, count = 1 },
+            new pc2.PointFieldMsg { name = "z", offset = 8, datatype = pc2.PointFieldMsg.FLOAT32, count = 1 }
+        };
+        pc2g.is_bigendian = false;
+        pc2g.point_step = 12;
+        pc2g.row_step = pc2m.point_step;
+        pc2g.is_dense = true;
+        pc2g.width = NewWidth;
+        pc2g.height = 1;
+        pc2g.data = new byte[0];
+
+        // ------------------------------
         //For edited point clouds
         pc2e = new pc2.PointCloud2Msg();
         pc2e.header.frame_id = "map";
@@ -291,6 +312,12 @@ public class RosPublisherExample : MonoBehaviour
 
     }
 
+    public void publishGroundTruth()
+    {
+        pc2g.data = mcb.PointCloudByte.ToArray();
+        pc2g.width = (uint)(mcb.PointCloudByte.Count / 12);
+        ros.Publish(groundTruthTopic, pc2g);
+    }
     public void AddPointCloudtoROSMessage(Vector3 point)
     {
         tempData = new byte[pc2m.data.Length];
