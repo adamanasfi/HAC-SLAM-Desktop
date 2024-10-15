@@ -314,10 +314,11 @@ public class RosPublisherExample : MonoBehaviour
 
     public void publishGroundTruth()
     {
-        pc2g.data = mcb.PointCloudByte.ToArray();
-        pc2g.width = (uint)(mcb.PointCloudByte.Count / 12);
-        ros.Publish(groundTruthTopic, pc2g);
+        pc2m.data = mcb.VoxelByte.ToArray();
+        pc2m.width = (uint)(mcb.VoxelByte.Count / 12);
+        ros.Publish(groundTruthTopic, pc2m);
     }
+
     public void AddPointCloudtoROSMessage(Vector3 point)
     {
         tempData = new byte[pc2m.data.Length];

@@ -46,7 +46,7 @@ public class MergedVoxelDisplay : MonoBehaviour
             cubePose.x = System.BitConverter.ToSingle(pointcloud.data, j);
             cubePose.z = System.BitConverter.ToSingle(pointcloud.data, j + 4);
             cubePose.y = System.BitConverter.ToSingle(pointcloud.data, j + 8);
-            mcb.VoxelizePointCloud(cubePose);
+            mcb.UserVoxelAddition(cubePose);
             // transformed = mcb.TransformPCL(Camera.main.transform.localPosition);
 /*            if (Vector3.Distance(cubePose, transformed) < 30)
             {

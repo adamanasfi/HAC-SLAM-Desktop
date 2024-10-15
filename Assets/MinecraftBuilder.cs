@@ -507,24 +507,6 @@ public class MinecraftBuilder : MonoBehaviour
         }
     }
 
-    public void VoxelizePointCloud(Vector3 point)
-    {
-        point.x = Mathf.RoundToInt(point.x / cubesize) * cubesize;
-        point.y = Mathf.RoundToInt(point.y / cubesize) * cubesize;
-        point.z = Mathf.RoundToInt(point.z / cubesize) * cubesize;
-        if (!PointCloudPose.Contains(point))
-        {
-            PointCloudPose.Add(point);
-            kube = Instantiate(cube, point, Quaternion.identity);
-            kube.gameObject.name = "MergedVoxel";
-            VoxelMeshRenderer = kube.GetComponent<MeshRenderer>();
-            VoxelMeshRenderer.material = materials[0]; // change color
-            PointCloudByte.AddRange(BitConverter.GetBytes(point.x));
-            PointCloudByte.AddRange(BitConverter.GetBytes(point.z));
-            PointCloudByte.AddRange(BitConverter.GetBytes(point.y));
-        }
-    }
-
     public void VoxelDestroyer(Vector3 point)
     {
 
@@ -632,8 +614,8 @@ public class MinecraftBuilder : MonoBehaviour
 
                 kube = Instantiate(cube, point, Quaternion.identity);
                 kube.name = "VoxelAdded";
-                VoxelMeshRenderer = kube.GetComponent<MeshRenderer>();
-                VoxelMeshRenderer.material = materials[1];
+                //VoxelMeshRenderer = kube.GetComponent<MeshRenderer>();
+                //VoxelMeshRenderer.material = materials[1];
                 kube.transform.SetParent(AdditonParent.gameObject.transform);
 
                 VoxelByteMap.Add(VoxelPose.IndexOf(point));
@@ -650,8 +632,8 @@ public class MinecraftBuilder : MonoBehaviour
                     if (overlap.gameObject.name.Contains("Voxel"))
                     {
                         overlap.gameObject.name = "VoxelAdded";
-                        VoxelMeshRenderer = overlap.gameObject.GetComponent<MeshRenderer>();
-                        VoxelMeshRenderer.material = materials[1];
+                        // VoxelMeshRenderer = overlap.gameObject.GetComponent<MeshRenderer>();
+                        // VoxelMeshRenderer.material = materials[1];
                         overlap.gameObject.transform.SetParent(AdditonParent.gameObject.transform);
                     }
 
@@ -674,8 +656,8 @@ public class MinecraftBuilder : MonoBehaviour
             //pub.PublishEditedPointCloudMsg();
             kube = Instantiate(cube, point, Quaternion.identity);
             kube.gameObject.name = "VoxelAdded";
-            VoxelMeshRenderer = kube.GetComponent<MeshRenderer>();
-            VoxelMeshRenderer.material = materials[1];
+            // VoxelMeshRenderer = kube.GetComponent<MeshRenderer>();
+            // VoxelMeshRenderer.material = materials[1];
             kube.transform.SetParent(AdditonParent.gameObject.transform);
 
         }
@@ -684,13 +666,6 @@ public class MinecraftBuilder : MonoBehaviour
         AddedVoxelByte.AddRange(BitConverter.GetBytes(TransformedPoints.x));
         AddedVoxelByte.AddRange(BitConverter.GetBytes(TransformedPoints.z));
         AddedVoxelByte.AddRange(BitConverter.GetBytes(TransformedPoints.y));
-        if (!PointCloudPose.Contains(point))
-        {
-            PointCloudPose.Add(point);
-            PointCloudByte.AddRange(BitConverter.GetBytes(point.x));
-            PointCloudByte.AddRange(BitConverter.GetBytes(point.z));
-            PointCloudByte.AddRange(BitConverter.GetBytes(point.y));
-        }
     }
 
     public void UserAssetAddition(Vector3 point)
@@ -758,13 +733,6 @@ public class MinecraftBuilder : MonoBehaviour
         AddedVoxelByte.AddRange(BitConverter.GetBytes(TransformedPoints.x));
         AddedVoxelByte.AddRange(BitConverter.GetBytes(TransformedPoints.z));
         AddedVoxelByte.AddRange(BitConverter.GetBytes(TransformedPoints.y));
-        if (!PointCloudPose.Contains(point))
-        {
-            PointCloudPose.Add(point);
-            PointCloudByte.AddRange(BitConverter.GetBytes(point.x));
-            PointCloudByte.AddRange(BitConverter.GetBytes(point.z));
-            PointCloudByte.AddRange(BitConverter.GetBytes(point.y));
-        }
     }
 
     public void VuforiaAddition(Vector3 point)
@@ -841,6 +809,13 @@ public class MinecraftBuilder : MonoBehaviour
         disty_in_cm = Mathf.RoundToInt(point.y / cubesize) * cubesize;
         distz_in_cm = Mathf.RoundToInt(point.z / cubesize) * cubesize;
         point.Set(distx_in_cm, disty_in_cm, distz_in_cm);
+
+        if (PointCloudPose.Contains(point))
+        {
+            PointCloudByte.RemoveRange(3 * PointCloudPose.IndexOf(point), 3);
+            PointCloudPose.RemoveAt(PointCloudPose.IndexOf(point));
+        }
+
         if (VoxelPose.Contains(point))
         {
             VoxelProba[VoxelPose.IndexOf(point)] = 2f;
@@ -879,10 +854,6 @@ public class MinecraftBuilder : MonoBehaviour
         VoxelMeshRenderer = kube.GetComponent<MeshRenderer>();
         VoxelMeshRenderer.material = materials[2];
         kube.transform.SetParent(DeletionParent.gameObject.transform);
-        if (PointCloudPose.Contains(point))
-        {
-            PointCloudByte.RemoveRange(12 * PointCloudPose.IndexOf(point), 12);
-        }
     }
 
     public Vector3 TransformPCL(Vector3 Pooint)
