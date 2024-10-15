@@ -51,10 +51,8 @@ public class MinecraftBuilder : MonoBehaviour
     bool MappingSwitch;
 
     List<Vector3> VoxelPose;
-    List<Vector3> PointCloudPose;
     [NonSerialized]
     public List<Byte> VoxelByte, AddedVoxelByte, DeletedVoxelByte;
-    public List<Byte> PointCloudByte;
     List<float> VoxelProba;
     List<bool> VoxelExists;
     List<int> VoxelByteMap;
@@ -97,8 +95,6 @@ public class MinecraftBuilder : MonoBehaviour
         VoxelProba = new List<float>();
         VoxelExists = new List<bool>();
         VoxelByteMap = new List<int>();
-        PointCloudPose = new List<Vector3>();
-        PointCloudByte = new List<Byte>();
         cubesizeScale = new Vector3(cubesize - 0.001f, cubesize - 0.001f, cubesize - 0.001f);
         //VoxelProba = new Dictionary<Vector3, float>();
         spatial = false;
@@ -809,12 +805,6 @@ public class MinecraftBuilder : MonoBehaviour
         disty_in_cm = Mathf.RoundToInt(point.y / cubesize) * cubesize;
         distz_in_cm = Mathf.RoundToInt(point.z / cubesize) * cubesize;
         point.Set(distx_in_cm, disty_in_cm, distz_in_cm);
-
-        if (PointCloudPose.Contains(point))
-        {
-            PointCloudByte.RemoveRange(3 * PointCloudPose.IndexOf(point), 3);
-            PointCloudPose.RemoveAt(PointCloudPose.IndexOf(point));
-        }
 
         if (VoxelPose.Contains(point))
         {
