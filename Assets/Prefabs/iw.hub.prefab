@@ -246,6 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 913f04652e0e4eb4d895de60c8196aba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allowedMotion: 0
   circlePrefab: {fileID: 9044416227409862211, guid: d0702624b07d31347b9115d9b594f22c, type: 3}
   xCircle: {fileID: 0}
   yCircle: {fileID: 0}

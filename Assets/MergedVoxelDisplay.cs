@@ -67,8 +67,9 @@ public class MergedVoxelDisplay : MonoBehaviour
             countTillYield++;
             
 
-            if (countTillYield % 500 == 0) // Spawn 10 voxels each frame
+            if (countTillYield % 2000 == 0) // Spawn 10 voxels each frame
             {
+                Debug.Log("Done 2000");
                 yield return null;
             }
             

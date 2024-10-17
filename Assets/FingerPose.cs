@@ -240,25 +240,9 @@ public class FingerPose : MonoBehaviour
         
 }
 
-    public void CubeAdder()
-    {
-        if (EditorActivatorOld)
-        {
-            _MinecraftBuilder.InstantiateEditor(InitialPose_incubes, FinalPose_incubes);
-            Destroy(Selector);
-        }
-        
-    }
 
-    public void CubeRemover()
-    {
-        if (EditorActivatorOld)
-        {
-            _MinecraftBuilder.DestroyEditor(InitialPose_incubes, FinalPose_incubes);
-            Destroy(Selector);
-        }
-        
-    }
+
+
    
     public void ActivateEditor(bool state)
     {
@@ -313,12 +297,7 @@ public class FingerPose : MonoBehaviour
                                 //coliderPose = coliderPose / cubesize;
                                 //coliderPose = coliderPose * 0.0499f;
                                 //_MinecraftBuilder.Instantiator(coliderPose, true);
-                                if (AddingAssets || VuforiaEnabled)
-                                {
-                                    _MinecraftBuilder.UserAssetAddition(coliderPose);
-                                    _RosPublisher.LabeledPointCloudPopulater(coliderPose, AssetLabel, AssetInstance);
-                                }
-                                else if (DeletingVoxels)
+                                if (DeletingVoxels)
                                 {
                                     _MinecraftBuilder.UserVoxelDeletion(coliderPose);
                                 }
@@ -326,6 +305,7 @@ public class FingerPose : MonoBehaviour
                                 {
                                     // passing every voxel center in the prism as an argument
                                     _MinecraftBuilder.UserVoxelAddition(coliderPose); 
+                                    if (AddingAssets) _RosPublisher.LabeledPointCloudPopulater(coliderPose, AssetLabel, AssetInstance);
                                 }
                                 break;
                             }
