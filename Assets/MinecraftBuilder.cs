@@ -108,13 +108,10 @@ public class MinecraftBuilder : MonoBehaviour
             VoxelMeshRenderer = kube.GetComponent<MeshRenderer>();
             VoxelMeshRenderer.material = materials[2];
             kube.transform.SetParent(DeletionParent.gameObject.transform);
-            // Destroy(hitColliders[0].gameObject);
             int index = FindVoxelIndex(point);
             VoxelByte.RemoveRange(index, 12);
             DeletedVoxelByte.AddRange(BitConverter.GetBytes(point.x));
             DeletedVoxelByte.AddRange(BitConverter.GetBytes(point.z));
-            DeletedVoxelByte.AddRange(BitConverter.GetBytes(point.y));
-            // kube = Instantiate(cube, point, Quaternion.identity);
         }
     }
 

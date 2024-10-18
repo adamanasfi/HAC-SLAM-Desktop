@@ -9,7 +9,6 @@ using TMPro;
 
 public class FingerPose : MonoBehaviour
 {
-    bool AddedAsset;
     public GameObject IndicatorPrefab, Indicator;
     public GameObject AddVoxelsMenu, DeleteVoxelsMenu, AddAssetsMenu, AdjustConfirmAbortMenu;
     bool instantiatedIndicator;
@@ -22,14 +21,9 @@ public class FingerPose : MonoBehaviour
     public LabelerFingerPose Labeler;
     public MinecraftBuilder _MinecraftBuilder;
     public RosPublisherExample _RosPublisher;
-    Microsoft.MixedReality.Toolkit.Utilities.MixedRealityPose poseLeft;
-    Microsoft.MixedReality.Toolkit.Utilities.MixedRealityPose poseLeftIndex; //new
-    Microsoft.MixedReality.Toolkit.Utilities.MixedRealityPose poseLeftThumb; //new
-    IMixedRealityHandJointService handJointService;
-    float cubesize, HandAngleThreshold;
-    float fingersThreshold = 0.04f;
+    float cubesize;
     public GameObject Selector;
-    bool EditorActivator, EditorActivatorOld, selectorInstantiated, trackingLost, fingersClosed, doneInstantiation, testingBool, ConvexityState, DeletingVoxels, AddingAssets, VuforiaEnabled, VuforiaFound, HandAngle;
+    bool EditorActivator, selectorInstantiated, doneInstantiation, ConvexityState, DeletingVoxels, AddingAssets;
 
     Renderer selectorMesh;
     Vector3 minbound, maxbound; //delete 
@@ -45,24 +39,19 @@ public class FingerPose : MonoBehaviour
     MeshCollider _meshCollider;
     InputActionHandler _inputActionHandler;
     string AssetName;
+    Vector3 mousePosition;
     
     private void Start()
     {
-        AddedAsset = false;
         instantiatedIndicator = false;
         zDepth = Camera.main.nearClipPlane;
-        handJointService = CoreServices.GetInputSystemDataProvider<IMixedRealityHandJointService>();
         cubesize = _MinecraftBuilder.cubesize;
-        HandAngleThreshold = 30;
         EnablePrism = false;  //enabled when the user gestures a pinch
         EditorActivator = false; //enabled from the 'Edit Voxels' button
-        EditorActivatorOld = false;
         doneInstantiation = false;
-        testingBool = true;
         DeletingVoxels = false;
         AddingAssets = false;
         cubesizeScale.Set(cubesize, cubesize, cubesize);
-        fingersThreshold = 0.04f;
         Prism = Selectors[3];
         _meshCollider = Prism.GetComponent<MeshCollider>();
         _inputActionHandler = gameObject.GetComponent<InputActionHandler>();
@@ -78,192 +67,111 @@ public class FingerPose : MonoBehaviour
     {
         if (EditorActivator)
         {
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
-            zDepth += scroll;
-            if (!doneInstantiation)
+            HandleMouseInput();
+        }
+    }
+
+    void HandleMouseInput()
+    {
+        if (!doneInstantiation)
+        {
+
+            UpdateIndicatorPosition();
+            if (AddingAssets) HandleAssetInstantiation();
+            else HandleSelectorInstantiation();
+        }
+    }
+
+    void HandleSelectorInstantiation()
+    {
+        if (Input.GetKey(KeyCode.Space) && Input.GetMouseButtonDown(0) && !selectorInstantiated)
+        {
+            InstantiateSelector();
+        }
+
+        else if (selectorInstantiated && !doneInstantiation)
+        {
+            StretchSelector();
+
+            if (!Input.GetMouseButton(0))
             {
-                if (selectorInstantiated)
-                {
-                    Debug.Log("DRAWING CUBE");
-                    //Update size of selector
-                    Vector3 mousePosition = Input.mousePosition;
-                    mousePosition.z = zDepth;
-                    Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-                    FinalPose = mouseWorldPosition;
-                    Indicator.transform.position = mouseWorldPosition;
-                    //converting units to cubes
-                    FinalPose_incubes.Set(Mathf.RoundToInt(FinalPose.x / cubesize), Mathf.RoundToInt(FinalPose.y / cubesize), Mathf.RoundToInt(FinalPose.z / cubesize));
-                    PrismCenter = (InitialPose_incubes + FinalPose_incubes);
-
-                    //without extra cubesize
-                    Scale_incubes.x = Mathf.Max(Mathf.Abs((InitialPose_incubes.x - FinalPose_incubes.x) * cubesize), cubesize);
-                    Scale_incubes.y = Mathf.Max(Mathf.Abs((InitialPose_incubes.y - FinalPose_incubes.y) * cubesize), cubesize);
-                    Scale_incubes.z = Mathf.Max(Mathf.Abs((InitialPose_incubes.z - FinalPose_incubes.z) * cubesize), cubesize);
-
-                                
-                    //transform selector
-                    Selector.transform.position = PrismCenter * cubesize / 2;
-                    Selector.transform.localScale = Scale_incubes;
-                    
-                  
-                    if (!Input.GetMouseButton(0))   //successful instantiation process
-                    {
-                        //Set selector script
-                        //selectorInstantiated = false; // this should happen in the else of doneInstantiation
-                        doneInstantiation = true;
-                        //selectorInstantiated = false;
-                        if (DeletingVoxels) DeleteVoxelsMenu.SetActive(false);
-                        else AddVoxelsMenu.SetActive(false);
-                        AdjustConfirmAbortMenu.SetActive(true);
-                    }
-                    
-
-                }
-                else  //here the instantation happens
-                {
-                    Vector3 mousePosition = Input.mousePosition;
-                    mousePosition.z = zDepth;
-                    Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-                    if (!instantiatedIndicator)
-                    {
-                        Indicator = Instantiate(IndicatorPrefab, mouseWorldPosition, Quaternion.identity);
-                        instantiatedIndicator = true;
-                    }
-                    else
-                    {
-                        Indicator.transform.position = mouseWorldPosition;
-                    }
-                    
-
-                    if (Input.GetKey(KeyCode.Space) && Input.GetMouseButtonDown(0))
-                    {
-                        Debug.Log("INSTANTIATION HAPPENING");
-                        
-                        //selector instantiation
-                        InitialPose = mouseWorldPosition;
-                        InitialPose_incubes.Set(Mathf.RoundToInt(InitialPose.x / cubesize), Mathf.RoundToInt(InitialPose.y / cubesize), Mathf.RoundToInt(InitialPose.z / cubesize));
-                        Vector3 center = new Vector3();
-                        center.Set(InitialPose_incubes.x * cubesize, InitialPose_incubes.y * cubesize, InitialPose_incubes.z * cubesize);
-                        Selector = Instantiate(Prism, center, Quaternion.identity);
-                        Selector.name = "Prism";
-                        selectorInstantiated = true;
-                    }
-                }
-            }
-            else
-            {
+                doneInstantiation = true;
                 selectorInstantiated = false;
                 instantiatedIndicator = false;
                 Destroy(Indicator);
-            }
-            
-        }
-
-        if (VuforiaFound)
-        {
-            Selector.transform.position = ModelTarget.transform.position;
-            Selector.transform.rotation = ModelTarget.transform.rotation;
-        }
-
-        else if (AddingAssets)
-        {
-            if (!AddedAsset)
-            {
-                float scroll = Input.GetAxis("Mouse ScrollWheel");
-                zDepth += scroll;
-                Vector3 mousePosition = Input.mousePosition;
-                mousePosition.z = zDepth;
-                Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-                if (!instantiatedIndicator)
-                {
-                    Indicator = Instantiate(IndicatorPrefab, mouseWorldPosition, Quaternion.identity);
-                    instantiatedIndicator = true;
-                }
-                else
-                {
-                    Indicator.transform.position = mouseWorldPosition;
-                }
-                if (Input.GetKey(KeyCode.Space) && Input.GetMouseButtonDown(0))
-                {
-                    AssetPose = mouseWorldPosition;
-                    // AssetRot.Set(0, Camera.main.transform.localRotation.eulerAngles.y, 0);
-                    Selector = Instantiate(Prism, AssetPose, Quaternion.identity);
-                    Selector.name = "Prism";
-                    instantiatedIndicator = false;
-                    Destroy(Indicator);
-                    AddAssetsMenu.SetActive(false);
-                    AdjustConfirmAbortMenu.SetActive(true);
-                    AddedAsset = true;
-
-                }
+                if (DeletingVoxels) DeleteVoxelsMenu.SetActive(false);
+                else AddVoxelsMenu.SetActive(false);
+                AdjustConfirmAbortMenu.SetActive(true);
             }
         }
+    }
 
-
-        /////// here is the old part
-        /*if (EnablePrism == true && HandJointUtils.TryGetJointPose(Microsoft.MixedReality.Toolkit.Utilities.TrackedHandJoint.IndexTip, Microsoft.MixedReality.Toolkit.Utilities.Handedness.Right, out poseLeft))
+    void UpdateIndicatorPosition()
+    {
+        zDepth += Input.GetAxis("Mouse ScrollWheel");
+        mousePosition = Input.mousePosition;
+        mousePosition.z = zDepth;
+        mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+        if (!instantiatedIndicator)
         {
+            Indicator = Instantiate(IndicatorPrefab, mousePosition, Quaternion.identity);
+            instantiatedIndicator = true;
+        }
+        else
+        {
+            Indicator.transform.position = mousePosition;
+        }
+    }
 
-            FinalPose = poseLeft.Position;
-            
-            //Converting units to cubes:
-            FinalPose_incubes.Set(Mathf.RoundToInt(FinalPose.x / cubesize), Mathf.RoundToInt(FinalPose.y / cubesize), Mathf.RoundToInt(FinalPose.z / cubesize));
-            PrismCenter = (InitialPose_incubes + FinalPose_incubes);
-            Scale_incubes.x = Mathf.Max(Mathf.Abs((InitialPose_incubes.x - FinalPose_incubes.x) * cubesize) + cubesize, cubesize);
-            Scale_incubes.y = Mathf.Max(Mathf.Abs((InitialPose_incubes.y - FinalPose_incubes.y) * cubesize) + cubesize, cubesize);
-            Scale_incubes.z = Mathf.Max(Mathf.Abs((InitialPose_incubes.z - FinalPose_incubes.z) * cubesize) + cubesize, cubesize);
+    void InstantiateSelector()
+    {
+        InitialPose = mousePosition;
+        InitialPose_incubes.Set(Mathf.RoundToInt(InitialPose.x / cubesize), Mathf.RoundToInt(InitialPose.y / cubesize), Mathf.RoundToInt(InitialPose.z / cubesize));
+        Vector3 center = new Vector3();
+        center.Set(InitialPose_incubes.x * cubesize, InitialPose_incubes.y * cubesize, InitialPose_incubes.z * cubesize);
+        Selector = Instantiate(Prism, center, Quaternion.identity);
+        Selector.name = "Prism";
+        selectorInstantiated = true;
+    }
 
-            Selector.transform.position = PrismCenter * cubesize/2;
-            Selector.transform.localScale = Scale_incubes;
-            
-        }*/
+    void StretchSelector()
+    {
+        FinalPose = mousePosition;
+        Indicator.transform.position = mousePosition;
+        FinalPose_incubes.Set(Mathf.RoundToInt(FinalPose.x / cubesize), Mathf.RoundToInt(FinalPose.y / cubesize), Mathf.RoundToInt(FinalPose.z / cubesize));
+        PrismCenter = (InitialPose_incubes + FinalPose_incubes);
+        Scale_incubes.x = Mathf.Max(Mathf.Abs((InitialPose_incubes.x - FinalPose_incubes.x) * cubesize), cubesize);
+        Scale_incubes.y = Mathf.Max(Mathf.Abs((InitialPose_incubes.y - FinalPose_incubes.y) * cubesize), cubesize);
+        Scale_incubes.z = Mathf.Max(Mathf.Abs((InitialPose_incubes.z - FinalPose_incubes.z) * cubesize), cubesize);
+        Selector.transform.position = PrismCenter * cubesize / 2;
+        Selector.transform.localScale = Scale_incubes;
     }
 
 
-    public void editor3D()  //instantiator
+    void HandleAssetInstantiation()
     {
-        if (EditorActivatorOld)
+        if (Input.GetKey(KeyCode.Space) && Input.GetMouseButtonDown(0))
         {
-            if (HandJointUtils.TryGetJointPose(Microsoft.MixedReality.Toolkit.Utilities.TrackedHandJoint.IndexTip, Microsoft.MixedReality.Toolkit.Utilities.Handedness.Right, out poseLeft))
-            {
-                EnablePrism = !EnablePrism;
-                InitialPose = poseLeft.Position;
-                InitialPose_incubes.Set(Mathf.RoundToInt(InitialPose.x / cubesize), Mathf.RoundToInt(InitialPose.y / cubesize), Mathf.RoundToInt(InitialPose.z / cubesize));
-
-                if (EnablePrism == true)
-                {
-                    Selector = Instantiate(Prism, InitialPose_incubes, Quaternion.identity);
-                    Selector.name = "Prism";
-                }
-            }
+            AssetPose = mousePosition;
+            Selector = Instantiate(Prism, AssetPose, Quaternion.identity);
+            Selector.name = "Prism";
+            instantiatedIndicator = false;
+            Destroy(Indicator);
+            AddAssetsMenu.SetActive(false);
+            AdjustConfirmAbortMenu.SetActive(true);
+            doneInstantiation = true;
         }
-        
-}
+    }
 
 
 
-
-   
     public void ActivateEditor(bool state)
     {
         EditorActivator = state;
     }
-
-    public void vertexExtractor()
-    {
-        if (testingBool)
-        {
-            selectorMesh = Selector.GetComponent<Renderer>();
-            minbound = selectorMesh.bounds.min;
-            maxbound = selectorMesh.bounds.max;
-            //Instantiate(sfiro, minbound, Quaternion.identity); //watch out for the position it should be transformed
-            //Instantiate(sfiro, maxbound, Quaternion.identity);
-        }   
-    }
     
     public void officialVoxelizer()
     {
-        Debug.Log("ENTERED VOXELIZER");
         selectorMesh = Selector.GetComponent<Renderer>();
 
         //Rounding of the bounds to units of cubes:
@@ -285,7 +193,7 @@ public class FingerPose : MonoBehaviour
                 for (int k = minbound_inCubes.z; k <= maxbound_inCubes.z; k++)
                 {
                     coliderPose.Set(i, j, k);
-                    coliderPose = coliderPose * cubesize; // converting to world coordinates
+                    coliderPose = coliderPose * cubesize; 
 
                     overlaps = Physics.OverlapBox(coliderPose, cubesizeScale / 2);
                     if (overlaps != null)
@@ -302,8 +210,7 @@ public class FingerPose : MonoBehaviour
                                     _MinecraftBuilder.UserVoxelDeletion(coliderPose);
                                 }
                                 else
-                                {
-                                    // passing every voxel center in the prism as an argument
+                                {                                   
                                     _MinecraftBuilder.UserVoxelAddition(coliderPose); 
                                     if (AddingAssets) _RosPublisher.LabeledPointCloudPopulater(coliderPose, AssetLabel, AssetInstance);
                                 }
@@ -457,13 +364,7 @@ public class FingerPose : MonoBehaviour
         if (AddingAssets)
         {
             AddAssetsMenu.SetActive(true);
-            AddedAsset = false;
             _inputActionHandler.enabled = true;
-        }
-        else if (VuforiaEnabled)
-        {
-            VuforiaFound = false;
-            ModelTarget.SetActive(false);
         }
         else if (DeletingVoxels)
         {
@@ -477,16 +378,14 @@ public class FingerPose : MonoBehaviour
 
     public void confirmSelector()
     {
+        doneInstantiation = false;
         if (AddingAssets)
         {
             AddAssetsMenu.SetActive(true);
-            // _inputActionHandler.enabled = true;      NO NEED ON DESKTOP
             AssetInstance = Labeler.AssetInstance(AssetLabel);
             Labeler.AssetToolTip(Selector.transform.position, AssetName, AssetLabel, AssetInstance);
             _MinecraftBuilder.AddedVoxelByte.Clear();
-            Debug.Log("NOW VOXELIZE ASSET!");
             officialVoxelizer();
-            AddedAsset = false;
             _RosPublisher.PublishEditedPointCloudMsg();
             _RosPublisher.LabelPublisher();
         }
@@ -497,48 +396,20 @@ public class FingerPose : MonoBehaviour
             _MinecraftBuilder.DeletedVoxelByte.Clear();
             officialVoxelizer();
             _RosPublisher.PublishDeletedVoxels();
-            doneInstantiation = false;
         }
 
-
-        else if (VuforiaEnabled)
-        {
-            AssetInstance = Labeler.AssetInstance(AssetLabel);
-            Labeler.AssetToolTip(Selector.transform.position, AssetName, AssetLabel, AssetInstance);
-            _MinecraftBuilder.AddedVoxelByte.Clear();
-            officialVoxelizer();
-            _RosPublisher.PublishEditedPointCloudMsg();
-            _RosPublisher.LabelPublisher();
-            VuforiaFound = false;
-            ModelTarget.SetActive(false);
-
-        }
         else
         {
             AddVoxelsMenu.SetActive(true);
             _MinecraftBuilder.AddedVoxelByte.Clear();
             officialVoxelizer();
             _RosPublisher.PublishEditedPointCloudMsg();
-            doneInstantiation = false;
+            
         }
         
         Destroy(Selector);
         appBar.SetActive(false);
         
-    }
-
-    public void adjustSelector()
-    {
-        //Selector.GetComponent<BoxCollider>().enabled = true;
-        //Selector.GetComponent<BoundsControl>().enabled = true;
-        Selector.GetComponent<ObjectManipulator>().enabled = true;
-    }
-
-    public void doneSelector()
-    {
-        //Selector.GetComponent<BoxCollider>().enabled = false;
-        //Selector.GetComponent<BoundsControl>().enabled = false;
-        Selector.GetComponent<ObjectManipulator>().enabled = false;
     }
 
     public void requestSelectorShape(int index)
@@ -553,21 +424,6 @@ public class FingerPose : MonoBehaviour
     {
         _meshCollider.convex = state;
         ConvexityState = state;
-    }
-
-    public void AssetInstantiator()
-    {
-        if (Selector != null) Destroy(Selector);
-        AssetPose.x = Camera.main.transform.localPosition.x + 2 * Mathf.Sin(Camera.main.transform.localRotation.eulerAngles.y * Mathf.Deg2Rad);
-        AssetPose.y = Camera.main.transform.localPosition.y - 1.5f;
-        AssetPose.z = Camera.main.transform.localPosition.z + 2 * Mathf.Cos(Camera.main.transform.localRotation.eulerAngles.y * Mathf.Deg2Rad);
-        
-        AssetRot.Set(0, Camera.main.transform.localRotation.eulerAngles.y, 0);
-        
-        Selector = Instantiate(Prism, AssetPose, Quaternion.Euler(AssetRot));
-        Selector.name = "Prism";
-        appBar.SetActive(true);
-        _inputActionHandler.enabled = false;
     }
 
     public void EnableAssetAddition(bool state)
@@ -591,34 +447,5 @@ public class FingerPose : MonoBehaviour
         DeletingVoxels = state;
     }
 
-    public void EnableVuforia(bool state)
-    {
-        VuforiaEnabled = state;
-
-        if (!state)
-        {
-            VuforiaFound = false;
-            ModelTarget.SetActive(false);
-        }
-    }
-
-    public void VuforiaTargetRequest(int index)
-    {
-        VuforiaTargets[index].SetActive(true);
-        ModelTarget = VuforiaTargets[index];
-    }
-
-    public void ModelTracked(GameObject Object)
-    {
-        if (!VuforiaFound)
-        {
-            Prism = Object;
-            Selector = Instantiate(Prism, ModelTarget.transform.position, ModelTarget.transform.rotation);
-            Selector.name = "Prism";
-            appBar.SetActive(true);
-            VuforiaFound = true;
-        }
-
-    }
 
 }

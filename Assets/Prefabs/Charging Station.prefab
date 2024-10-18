@@ -103,7 +103,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -2432090755550338912, guid: 03a09e2e947ef0c438ea2b1302a7edc7, type: 3}
 --- !u!114 &6584508117127368665
@@ -242,6 +242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 913f04652e0e4eb4d895de60c8196aba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allowedMotion: 0
   circlePrefab: {fileID: 9044416227409862211, guid: d0702624b07d31347b9115d9b594f22c, type: 3}
   xCircle: {fileID: 0}
   yCircle: {fileID: 0}
