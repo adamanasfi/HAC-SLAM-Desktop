@@ -18,10 +18,7 @@ public class MergedVoxelDisplay : MonoBehaviour
     MeshRenderer VoxelMeshRenderer;
     public MinecraftBuilder mcb;
     Coroutine FillIncomingCoroutine;
-    private Dictionary<Vector3, List<Vector3>> chunkVoxels;
-    float cubeSize;
-    float chunkSize;
-    public GameObject chunkPrefab;
+    Vector3 cameraPosition;
 
     // Start is called before the first frame update
     void Start()
@@ -32,15 +29,10 @@ public class MergedVoxelDisplay : MonoBehaviour
         rx = 0;
         ry = 0;
         rz = 0;
-        cubeSize = 0.05f;
-        chunkSize = 3f;
-        // each chunk has its own voxels
-        chunkVoxels = new Dictionary<Vector3, List<Vector3>>();
     }
 
     IEnumerator FillIncoming(pc2 pointcloud)
     {
-
         Vector3 point;
         int j;
         int countTillYield = 0;
@@ -51,10 +43,12 @@ public class MergedVoxelDisplay : MonoBehaviour
             point.x = System.BitConverter.ToSingle(pointcloud.data, j);
             point.z = System.BitConverter.ToSingle(pointcloud.data, j + 4);
             point.y = System.BitConverter.ToSingle(pointcloud.data, j + 8);
+            VoxelManager.AddVoxel(point);
             countTillYield++;
             if (countTillYield % 500 == 0) yield return null;
         }
         Debug.Log("Done");
+        VoxelManager.done = true;
     }
 
 

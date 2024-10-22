@@ -285,14 +285,14 @@ public class RosPublisherExample : MonoBehaviour
     private void Update()
     {
 
-        timeElapsed += Time.deltaTime;
+/*        timeElapsed += Time.deltaTime;
 
         if (timeElapsed > publishMessageFrequency) // && yalla == true) //new
         {
             ros.Publish(topicName5, pc2m);
             PopulatePointCloudMsg();
             timeElapsed = 0;
-        }
+        }*/
 
 
         /*if (PublishTwist == true)

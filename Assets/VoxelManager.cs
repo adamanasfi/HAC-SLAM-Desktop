@@ -6,20 +6,83 @@ public class VoxelManager : MonoBehaviour
 {
     public static float voxelSize;
     public static GameObject voxelPrefab;
+    public static GameObject chunkParent;
     public static float chunkSize;
     public static GameObject chunkPrefab;
     public GameObject VoxelPrefab;
     public GameObject ChunkPrefab;
+    public GameObject ChunkParent;
     static Dictionary<Vector3, Chunk> ChunksDict;
-
+    Vector3 cameraPosition, oldCameraPosition;
+    public static bool done;
     // Start is called before the first frame update
     void Start()
     {
-        voxelSize = 0.05f;
-        chunkSize = 3f;
+        voxelSize = 0.1f;
+        chunkSize = 0.5f;
         voxelPrefab = VoxelPrefab;
         chunkPrefab = ChunkPrefab;
+        chunkParent = ChunkParent;
         ChunksDict = new Dictionary<Vector3, Chunk>();
+        oldCameraPosition = Camera.main.transform.position;
+        done = false;
+    }
+
+    private void Update()
+    {
+        if (done)
+        {
+            if (CameraPositionChanged())
+            {
+                DeleteOldVoxels();
+                BuildCurrentVoxels();
+            }
+        }
+    }
+
+    public bool CameraPositionChanged()
+    {
+        cameraPosition = RoundToChunk(Camera.main.transform.position);
+        return cameraPosition != oldCameraPosition;
+    }
+
+    public void DeleteOldVoxels()
+    {
+        Vector3 increment = new Vector3();
+        for (float i = -chunkSize; i <= chunkSize; i += chunkSize)
+        {
+            for (float j = 0; j <= 2 * chunkSize; j += chunkSize)
+            {
+                for (float k = -chunkSize; k <= chunkSize; k += chunkSize)
+                {
+                    increment.Set(i, j, k);
+                    if (ChunksDict.ContainsKey(oldCameraPosition + increment))
+                    {
+                        ChunksDict[oldCameraPosition + increment].gameobject.SetActive(false);
+                    }
+                }
+            }
+        }
+    }
+
+    public void BuildCurrentVoxels()
+    {
+        Vector3 increment = new Vector3();
+        for (float i = -chunkSize; i <= chunkSize; i += chunkSize)
+        {
+            for (float j = 0; j <= 2 * chunkSize; j += chunkSize)
+            {
+                for (float k = -chunkSize; k <= chunkSize; k += chunkSize)
+                {
+                    increment.Set(i, j, k);
+                    if (ChunksDict.ContainsKey(cameraPosition + increment))
+                    {
+                        ChunksDict[cameraPosition + increment].gameobject.SetActive(true);
+                    }
+                }
+            }
+        }
+        oldCameraPosition = cameraPosition;
     }
 
     public static void AddVoxel(Vector3 point)
