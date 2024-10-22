@@ -14,12 +14,14 @@ public class MergedVoxelDisplay : MonoBehaviour
     bool once = true;
     Vector3 transformed;
     GameObject kuby;
-
     public Material SelectedMaterial;
     MeshRenderer VoxelMeshRenderer;
     public MinecraftBuilder mcb;
     Coroutine FillIncomingCoroutine;
-
+    private Dictionary<Vector3, List<Vector3>> chunkVoxels;
+    float cubeSize;
+    float chunkSize;
+    public GameObject chunkPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -30,53 +32,29 @@ public class MergedVoxelDisplay : MonoBehaviour
         rx = 0;
         ry = 0;
         rz = 0;
+        cubeSize = 0.05f;
+        chunkSize = 3f;
+        // each chunk has its own voxels
+        chunkVoxels = new Dictionary<Vector3, List<Vector3>>();
     }
 
- 
     IEnumerator FillIncoming(pc2 pointcloud)
     {
 
-        Vector3 cubePose;
+        Vector3 point;
         int j;
         int countTillYield = 0;
 
         for (int i = 0; i < pointcloud.width; i++)
         {
             j = i * Mathf.RoundToInt(pointcloud.point_step);
-            cubePose.x = System.BitConverter.ToSingle(pointcloud.data, j);
-            cubePose.z = System.BitConverter.ToSingle(pointcloud.data, j + 4);
-            cubePose.y = System.BitConverter.ToSingle(pointcloud.data, j + 8);
-            mcb.UserVoxelAddition(cubePose);
-            // transformed = mcb.TransformPCL(Camera.main.transform.localPosition);
-/*            if (Vector3.Distance(cubePose, transformed) < 30)
-            {
-                kuby = Instantiate(cubz, cubePose, Quaternion.identity);
-                kuby.transform.SetParent(Parent.transform, false);
-                kuby.gameObject.name = "MergedVoxel";
-                if (pointcloud.data[j + 17] != 0)
-                {
-                    VoxelMeshRenderer = kuby.gameObject.GetComponent<MeshRenderer>();
-                    VoxelMeshRenderer.material = SelectedMaterial;
-                    Debug.Log("Oui");
-                }
-
-            }*/
-
-            
-
+            point.x = System.BitConverter.ToSingle(pointcloud.data, j);
+            point.z = System.BitConverter.ToSingle(pointcloud.data, j + 4);
+            point.y = System.BitConverter.ToSingle(pointcloud.data, j + 8);
             countTillYield++;
-            
-
-            if (countTillYield % 2000 == 0) // Spawn 10 voxels each frame
-            {
-                Debug.Log("Done 2000");
-                yield return null;
-            }
-            
+            if (countTillYield % 500 == 0) yield return null;
         }
         Debug.Log("Done");
-        //this.transform.rotation = Quaternion.Euler(rx, ry, rz);
-        //this.transform.position = new Vector3(x, y, z);
     }
 
 

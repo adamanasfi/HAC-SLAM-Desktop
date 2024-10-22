@@ -66,6 +66,7 @@ public class MinecraftBuilder : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         voxelLayer = LayerMask.NameToLayer("voxel");
         cubesize = cube.transform.localScale.x;
         VoxelByte = new List<Byte>();
@@ -76,10 +77,10 @@ public class MinecraftBuilder : MonoBehaviour
 
     public void UserVoxelAddition(Vector3 point)
     {
-        distx_in_cm = Mathf.RoundToInt(point.x / cubesize) * cubesize;
-        disty_in_cm = Mathf.RoundToInt(point.y / cubesize) * cubesize;
-        distz_in_cm = Mathf.RoundToInt(point.z / cubesize) * cubesize;
-        point = new Vector3(distx_in_cm, disty_in_cm, distz_in_cm);
+        VoxelManager.AddVoxel(point);
+/*        point.x = Mathf.RoundToInt(point.x / cubesize) * cubesize;
+        point.y = Mathf.RoundToInt(point.y / cubesize) * cubesize;
+        point.z = Mathf.RoundToInt(point.z / cubesize) * cubesize;
         if (!Physics.CheckBox(point, cubesizeScale / 2, Quaternion.identity, 1 << voxelLayer))
         {
             kube = Instantiate(cube, point, Quaternion.identity);
@@ -91,13 +92,13 @@ public class MinecraftBuilder : MonoBehaviour
             AddedVoxelByte.AddRange(BitConverter.GetBytes(point.z));
             AddedVoxelByte.AddRange(BitConverter.GetBytes(point.y));
             kube.transform.SetParent(AdditonParent.gameObject.transform);
-        }
+        }*/
     }
 
     public void UserVoxelDeletion(Vector3 point)
     {
-
-        distx_in_cm = Mathf.RoundToInt(point.x / cubesize) * cubesize;
+        VoxelManager.DeleteVoxel(point);
+/*        distx_in_cm = Mathf.RoundToInt(point.x / cubesize) * cubesize;
         disty_in_cm = Mathf.RoundToInt(point.y / cubesize) * cubesize;
         distz_in_cm = Mathf.RoundToInt(point.z / cubesize) * cubesize;
         point = new Vector3(distx_in_cm, disty_in_cm, distz_in_cm);
@@ -112,7 +113,7 @@ public class MinecraftBuilder : MonoBehaviour
             VoxelByte.RemoveRange(index, 12);
             DeletedVoxelByte.AddRange(BitConverter.GetBytes(point.x));
             DeletedVoxelByte.AddRange(BitConverter.GetBytes(point.z));
-        }
+        }*/
     }
 
     private int FindVoxelIndex(Vector3 position)
