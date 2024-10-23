@@ -13,17 +13,19 @@ public class VoxelManager : MonoBehaviour
     public GameObject ChunkPrefab;
     public GameObject ChunkParent;
     static Dictionary<Vector3, Chunk> ChunksDict;
+    static List<Chunk> ActivatedChunks;
     Vector3 cameraPosition, oldCameraPosition;
     public static bool done;
     // Start is called before the first frame update
     void Start()
     {
         voxelSize = 0.1f;
-        chunkSize = 0.5f;
+        chunkSize = 3f;
         voxelPrefab = VoxelPrefab;
         chunkPrefab = ChunkPrefab;
         chunkParent = ChunkParent;
         ChunksDict = new Dictionary<Vector3, Chunk>();
+        ActivatedChunks = new List<Chunk>();
         oldCameraPosition = Camera.main.transform.position;
         done = false;
     }
@@ -32,41 +34,32 @@ public class VoxelManager : MonoBehaviour
     {
         if (done)
         {
-            if (CameraPositionChanged())
-            {
-                DeleteOldVoxels();
-                BuildCurrentVoxels();
-            }
+            BuildCurrentVoxels();
+            DeleteOldVoxels(); 
         }
-    }
-
-    public bool CameraPositionChanged()
-    {
-        cameraPosition = RoundToChunk(Camera.main.transform.position);
-        return cameraPosition != oldCameraPosition;
     }
 
     public void DeleteOldVoxels()
     {
-        Vector3 increment = new Vector3();
-        for (float i = -chunkSize; i <= chunkSize; i += chunkSize)
+        cameraPosition = RoundToChunk(Camera.main.transform.position);
+        List<Chunk> chunksToDeactivate = new List<Chunk>();
+        foreach (Chunk chunk in ActivatedChunks)
         {
-            for (float j = 0; j <= 2 * chunkSize; j += chunkSize)
+            if (Mathf.Abs((chunk.position - cameraPosition).magnitude) > 3 * chunkSize)
             {
-                for (float k = -chunkSize; k <= chunkSize; k += chunkSize)
-                {
-                    increment.Set(i, j, k);
-                    if (ChunksDict.ContainsKey(oldCameraPosition + increment))
-                    {
-                        ChunksDict[oldCameraPosition + increment].gameobject.SetActive(false);
-                    }
-                }
+                chunksToDeactivate.Add(chunk);
             }
+        }
+        foreach (Chunk chunk in chunksToDeactivate)
+        {
+            chunk.gameobject.SetActive(false);
+            ActivatedChunks.Remove(chunk);
         }
     }
 
     public void BuildCurrentVoxels()
     {
+        cameraPosition = RoundToChunk(Camera.main.transform.position);
         Vector3 increment = new Vector3();
         for (float i = -chunkSize; i <= chunkSize; i += chunkSize)
         {
@@ -77,12 +70,16 @@ public class VoxelManager : MonoBehaviour
                     increment.Set(i, j, k);
                     if (ChunksDict.ContainsKey(cameraPosition + increment))
                     {
-                        ChunksDict[cameraPosition + increment].gameobject.SetActive(true);
+                        Chunk chunk = ChunksDict[cameraPosition + increment];
+                        if (!chunk.gameobject.activeInHierarchy)
+                        {
+                            chunk.gameobject.SetActive(true);
+                            ActivatedChunks.Add(chunk);
+                        }
                     }
                 }
             }
         }
-        oldCameraPosition = cameraPosition;
     }
 
     public static void AddVoxel(Vector3 point)
