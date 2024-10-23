@@ -207,11 +207,11 @@ public class FingerPose : MonoBehaviour
                                 //_MinecraftBuilder.Instantiator(coliderPose, true);
                                 if (DeletingVoxels)
                                 {
-                                    _MinecraftBuilder.UserVoxelDeletion(coliderPose);
+                                    VoxelManager.DeleteVoxel(coliderPose);
                                 }
                                 else
-                                {                                   
-                                    _MinecraftBuilder.UserVoxelAddition(coliderPose); 
+                                {
+                                    VoxelManager.AddVoxel(coliderPose,true);
                                     if (AddingAssets) _RosPublisher.LabeledPointCloudPopulater(coliderPose, AssetLabel, AssetInstance);
                                 }
                                 break;
@@ -221,8 +221,6 @@ public class FingerPose : MonoBehaviour
                 }
             }
         }
-
-
     }
 
     public void setAxes(bool state)

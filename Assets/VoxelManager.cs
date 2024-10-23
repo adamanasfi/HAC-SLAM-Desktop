@@ -82,12 +82,12 @@ public class VoxelManager : MonoBehaviour
         }
     }
 
-    public static void AddVoxel(Vector3 point)
+    public static void AddVoxel(Vector3 point, bool state)
     {
         Vector3 voxelVector = RoundToVoxel(point);
         Vector3 chunkVector = RoundToChunk(voxelVector);
         if (!ChunksDict.ContainsKey(chunkVector)) {
-            ChunksDict.Add(chunkVector, new Chunk(chunkVector));
+            ChunksDict.Add(chunkVector, new Chunk(chunkVector,state));
         }
         if (!ChunksDict[chunkVector].VoxelsDict.ContainsKey(voxelVector)) {
             ChunksDict[chunkVector].VoxelsDict.Add(voxelVector, new Voxel(voxelVector, ChunksDict[chunkVector].gameobject));

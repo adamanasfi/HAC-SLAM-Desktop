@@ -43,7 +43,7 @@ public class MergedVoxelDisplay : MonoBehaviour
             point.x = System.BitConverter.ToSingle(pointcloud.data, j);
             point.z = System.BitConverter.ToSingle(pointcloud.data, j + 4);
             point.y = System.BitConverter.ToSingle(pointcloud.data, j + 8);
-            VoxelManager.AddVoxel(point);
+            VoxelManager.AddVoxel(point,false);
             countTillYield++;
             if (countTillYield % 500 == 0) yield return null;
         }
