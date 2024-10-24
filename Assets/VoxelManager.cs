@@ -4,29 +4,15 @@ using UnityEngine;
 
 public class VoxelManager : MonoBehaviour
 {
-    public static float voxelSize;
-    public static GameObject voxelPrefab;
-    public static GameObject chunkParent;
-    public static float chunkSize;
-    public static GameObject chunkPrefab;
-    public GameObject VoxelPrefab;
-    public GameObject ChunkPrefab;
-    public GameObject ChunkParent;
     static Dictionary<Vector3, Chunk> ChunksDict;
     static List<Chunk> ActivatedChunks;
-    Vector3 cameraPosition, oldCameraPosition;
+    Vector3 cameraPosition;
     public static bool done;
     // Start is called before the first frame update
     void Start()
     {
-        voxelSize = 0.1f;
-        chunkSize = 3f;
-        voxelPrefab = VoxelPrefab;
-        chunkPrefab = ChunkPrefab;
-        chunkParent = ChunkParent;
         ChunksDict = new Dictionary<Vector3, Chunk>();
         ActivatedChunks = new List<Chunk>();
-        oldCameraPosition = Camera.main.transform.position;
         done = false;
     }
 
@@ -45,7 +31,7 @@ public class VoxelManager : MonoBehaviour
         List<Chunk> chunksToDeactivate = new List<Chunk>();
         foreach (Chunk chunk in ActivatedChunks)
         {
-            if (Mathf.Abs((chunk.position - cameraPosition).magnitude) > 3 * chunkSize)
+            if (Mathf.Abs((chunk.position - cameraPosition).magnitude) > 3 * PrefabsManager.chunkSize)
             {
                 chunksToDeactivate.Add(chunk);
             }
@@ -61,11 +47,11 @@ public class VoxelManager : MonoBehaviour
     {
         cameraPosition = RoundToChunk(Camera.main.transform.position);
         Vector3 increment = new Vector3();
-        for (float i = -chunkSize; i <= chunkSize; i += chunkSize)
+        for (float i = -PrefabsManager.chunkSize; i <= PrefabsManager.chunkSize; i += PrefabsManager.chunkSize)
         {
-            for (float j = 0; j <= 2 * chunkSize; j += chunkSize)
+            for (float j = 0; j <= 2 * PrefabsManager.chunkSize; j += PrefabsManager.chunkSize)
             {
-                for (float k = -chunkSize; k <= chunkSize; k += chunkSize)
+                for (float k = -PrefabsManager.chunkSize; k <= PrefabsManager.chunkSize; k += PrefabsManager.chunkSize)
                 {
                     increment.Set(i, j, k);
                     if (ChunksDict.ContainsKey(cameraPosition + increment))
@@ -90,19 +76,20 @@ public class VoxelManager : MonoBehaviour
             ChunksDict.Add(chunkVector, new Chunk(chunkVector,state));
         }
         if (!ChunksDict[chunkVector].VoxelsDict.ContainsKey(voxelVector)) {
-            ChunksDict[chunkVector].VoxelsDict.Add(voxelVector, new Voxel(voxelVector, ChunksDict[chunkVector].gameobject));
+            ChunksDict[chunkVector].VoxelsDict.Add(voxelVector, new Voxel(state ? PrefabsManager.addedVoxelPrefab : PrefabsManager.voxelPrefab,voxelVector, ChunksDict[chunkVector].gameobject));
         }
     }
-
+    
     public static void DeleteVoxel(Vector3 point)
     {
         Vector3 voxelVector = RoundToVoxel(point);
-        Vector3 boxSize = new Vector3(voxelSize - 0.001f, voxelSize - 0.001f, voxelSize - 0.001f);
+        Vector3 boxSize = new Vector3(PrefabsManager.voxelSize - 0.001f, PrefabsManager.voxelSize - 0.001f, PrefabsManager.voxelSize - 0.001f);
         if (Physics.CheckBox(voxelVector, boxSize / 2, Quaternion.identity, 1 << 3))
         {
             Vector3 chunkVector = RoundToChunk(voxelVector);
             Chunk chunk = ChunksDict[chunkVector];
             Voxel voxel = chunk.VoxelsDict[voxelVector];
+            Instantiate(PrefabsManager.deletedVoxelPrefab, voxel.position, Quaternion.identity, PrefabsManager.deletedVoxelPrefabParent.transform);
             Destroy(voxel.gameobject);
             chunk.VoxelsDict.Remove(voxelVector);
         }
@@ -111,18 +98,18 @@ public class VoxelManager : MonoBehaviour
     public static Vector3 RoundToVoxel(Vector3 point)
     {
         Vector3 roundedVector = new Vector3();
-        roundedVector.Set(Mathf.RoundToInt(point.x / voxelSize) * voxelSize,
-            Mathf.RoundToInt(point.y / voxelSize) * voxelSize,
-            Mathf.RoundToInt(point.z / voxelSize) * voxelSize);
+        roundedVector.Set(Mathf.RoundToInt(point.x / PrefabsManager.voxelSize) * PrefabsManager.voxelSize,
+            Mathf.RoundToInt(point.y / PrefabsManager.voxelSize) * PrefabsManager.voxelSize,
+            Mathf.RoundToInt(point.z / PrefabsManager.voxelSize) * PrefabsManager.voxelSize);
         return roundedVector;
     }
     
     public static Vector3 RoundToChunk(Vector3 point)
     {
         Vector3 roundedVector = new Vector3();
-        roundedVector.Set(Mathf.RoundToInt(point.x / chunkSize) * chunkSize,
-            Mathf.RoundToInt(point.y / chunkSize) * chunkSize,
-            Mathf.RoundToInt(point.z / chunkSize) * chunkSize);
+        roundedVector.Set(Mathf.RoundToInt(point.x / PrefabsManager.chunkSize) * PrefabsManager.chunkSize,
+            Mathf.RoundToInt(point.y / PrefabsManager.chunkSize) * PrefabsManager.chunkSize,
+            Mathf.RoundToInt(point.z / PrefabsManager.chunkSize) * PrefabsManager.chunkSize);
         return roundedVector;
     }
 }

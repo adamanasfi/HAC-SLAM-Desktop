@@ -10,10 +10,10 @@ public class Voxel
     public byte[] positionInBytes;
     
 
-    public Voxel(Vector3 voxelPosition,GameObject chunkParent)
+    public Voxel(GameObject prefab, Vector3 voxelPosition,GameObject chunkParent)
     {
         position = voxelPosition;
-        gameobject = UnityEngine.Object.Instantiate(VoxelManager.voxelPrefab, voxelPosition, Quaternion.identity, chunkParent.transform);
+        gameobject = UnityEngine.Object.Instantiate(prefab, voxelPosition, Quaternion.identity, chunkParent.transform);
     }
 
 
