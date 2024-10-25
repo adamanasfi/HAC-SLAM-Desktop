@@ -33,7 +33,7 @@ public class VoxelManager : MonoBehaviour
         foreach (Chunk chunk in ActivatedChunks)
         {
             distance = chunk.position - cameraPosition;
-            if (Mathf.Abs((distance).magnitude) > 3 * PrefabsManager.chunkSize || Mathf.Abs(distance.y) > 2 * PrefabsManager.chunkSize)
+            if (Mathf.Abs((distance).magnitude) > 3 * PrefabsManager.chunkSize || Mathf.Abs(distance.y) >  PrefabsManager.chunkSize)
             {
                 chunksToDeactivate.Add(chunk);
             }
@@ -51,7 +51,7 @@ public class VoxelManager : MonoBehaviour
         Vector3 increment = new Vector3();
         for (float i = -PrefabsManager.chunkSize; i <= PrefabsManager.chunkSize; i += PrefabsManager.chunkSize)
         {
-            for (float j = 0; j <= 2 * PrefabsManager.chunkSize; j += PrefabsManager.chunkSize)
+            for (float j = 0; j <= PrefabsManager.chunkSize; j += PrefabsManager.chunkSize)
             {
                 for (float k = -PrefabsManager.chunkSize; k <= PrefabsManager.chunkSize; k += PrefabsManager.chunkSize)
                 {

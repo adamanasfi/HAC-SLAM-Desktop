@@ -2,12 +2,8 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public float moveSpeed = 10f;       // Movement speed
-    public float rotationSpeed = 10f;  // Rotation speed
-    public float smoothTime = 0.2f;     // Time for smoothing motion
-
-    private Vector3 velocity = Vector3.zero;
-    private Vector3 rotationVelocity = Vector3.zero;
+    public float moveSpeed = 0.1f;        // Movement speed
+    public float rotationSpeed = 0.1f;   // Rotation speed
 
     private void Update()
     {
@@ -24,12 +20,9 @@ public class CameraController : MonoBehaviour
 
         float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? moveSpeed * 2f : moveSpeed;
 
-        // Move the camera
-        Vector3 targetMovement = new Vector3(moveX, moveY, moveZ);
-        targetMovement = transform.TransformDirection(targetMovement) * currentSpeed * Time.deltaTime;
-
-        // Smooth movement
-        transform.position = Vector3.SmoothDamp(transform.position, transform.position + targetMovement, ref velocity, smoothTime);
+        // Move the camera directly
+        Vector3 movement = new Vector3(moveX, moveY, moveZ) * currentSpeed * Time.deltaTime;
+        transform.Translate(movement, Space.Self);
     }
 
     private void HandleRotation()
@@ -37,14 +30,12 @@ public class CameraController : MonoBehaviour
         // Check if the right mouse button is held down
         if (Input.GetMouseButton(1))
         {
-            float mouseX = Input.GetAxis("Mouse X"); // Horizontal mouse movement
-            float mouseY = Input.GetAxis("Mouse Y"); // Vertical mouse movement
+            float mouseX = Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime; // Horizontal mouse movement
+            float mouseY = Input.GetAxis("Mouse Y") * rotationSpeed * Time.deltaTime; // Vertical mouse movement
 
-            // Target rotation
-            Vector3 targetRotation = new Vector3(-mouseY, mouseX, 0f) * rotationSpeed * Time.deltaTime;
-
-            // Smooth rotation
-            transform.eulerAngles = Vector3.SmoothDamp(transform.eulerAngles, transform.eulerAngles + targetRotation, ref rotationVelocity, smoothTime);
+            // Rotate the camera
+            transform.Rotate(Vector3.up, mouseX, Space.World);        // Yaw rotation
+            transform.Rotate(Vector3.right, -mouseY, Space.Self);     // Pitch rotation
         }
     }
 }
