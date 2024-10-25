@@ -77,7 +77,6 @@ public class MinecraftBuilder : MonoBehaviour
 
     public Vector3 TransformPCL(Vector3 Pooint)
     {
-
         Vector3 rotationAngles = new Vector3(-(float)sub.rx, -(float)sub.ry, -(float)sub.rz);
         Vector3 translation = new Vector3(-(float)sub.x, -(float)sub.y, -(float)sub.z);
         //Vector3 rotationAngles = new Vector3(0, 133.951803f, 0);

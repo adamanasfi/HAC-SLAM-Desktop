@@ -6,7 +6,7 @@ public class VoxelManager : MonoBehaviour
 {
     static Dictionary<Vector3, Chunk> ChunksDict;
     static List<Chunk> ActivatedChunks;
-    Vector3 cameraPosition;
+    static Vector3 cameraPosition;
     public static bool done;
     // Start is called before the first frame update
     void Start()
@@ -25,13 +25,15 @@ public class VoxelManager : MonoBehaviour
         }
     }
 
-    public void DeleteOldVoxels()
+    public static void DeleteOldVoxels()
     {
         cameraPosition = RoundToChunk(Camera.main.transform.position);
         List<Chunk> chunksToDeactivate = new List<Chunk>();
+        Vector3 distance = new Vector3();
         foreach (Chunk chunk in ActivatedChunks)
         {
-            if (Mathf.Abs((chunk.position - cameraPosition).magnitude) > 3 * PrefabsManager.chunkSize)
+            distance = chunk.position - cameraPosition;
+            if (Mathf.Abs((distance).magnitude) > 3 * PrefabsManager.chunkSize || Mathf.Abs(distance.y) > 2 * PrefabsManager.chunkSize)
             {
                 chunksToDeactivate.Add(chunk);
             }
@@ -43,7 +45,7 @@ public class VoxelManager : MonoBehaviour
         }
     }
 
-    public void BuildCurrentVoxels()
+    public static void BuildCurrentVoxels()
     {
         cameraPosition = RoundToChunk(Camera.main.transform.position);
         Vector3 increment = new Vector3();
@@ -89,8 +91,8 @@ public class VoxelManager : MonoBehaviour
             Vector3 chunkVector = RoundToChunk(voxelVector);
             Chunk chunk = ChunksDict[chunkVector];
             Voxel voxel = chunk.VoxelsDict[voxelVector];
-            Instantiate(PrefabsManager.deletedVoxelPrefab, voxel.position, Quaternion.identity, PrefabsManager.deletedVoxelPrefabParent.transform);
             Destroy(voxel.gameobject);
+            Instantiate(PrefabsManager.deletedVoxelPrefab, voxel.position, Quaternion.identity, PrefabsManager.deletedVoxelPrefabParent.transform);
             chunk.VoxelsDict.Remove(voxelVector);
         }
     }
@@ -111,5 +113,15 @@ public class VoxelManager : MonoBehaviour
             Mathf.RoundToInt(point.y / PrefabsManager.chunkSize) * PrefabsManager.chunkSize,
             Mathf.RoundToInt(point.z / PrefabsManager.chunkSize) * PrefabsManager.chunkSize);
         return roundedVector;
+    }
+
+    public static void HideDeletedVoxels(bool state)
+    {
+        PrefabsManager.deletedVoxelPrefabParent.SetActive(state);
+    }
+
+    public static void HideVoxels(bool state)
+    {
+        PrefabsManager.chunkParentPrefab.SetActive(state);
     }
 }

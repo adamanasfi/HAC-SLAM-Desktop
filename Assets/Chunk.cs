@@ -11,7 +11,7 @@ public class Chunk
     public Chunk(Vector3 chunkPosition, bool state) 
     {
         position = chunkPosition;
-        gameobject = UnityEngine.Object.Instantiate(PrefabsManager.chunkPrefab, Vector3.zero, Quaternion.identity);
+        gameobject = UnityEngine.Object.Instantiate(PrefabsManager.chunkPrefab, Vector3.zero, Quaternion.identity,PrefabsManager.chunkParentPrefab.transform);
         gameobject.SetActive(state);
         VoxelsDict = new Dictionary<Vector3, Voxel>();
     }

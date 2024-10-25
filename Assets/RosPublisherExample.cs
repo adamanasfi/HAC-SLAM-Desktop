@@ -587,7 +587,7 @@ public class RosPublisherExample : MonoBehaviour
     {
         robot_twist = new GeometryMsgs.TwistMsg();
         TransformedPose = mcb.TransformPCL(RobotTarget.transform.position);
-        
+
         robot_twist.linear.x = TransformedPose.x;
         robot_twist.linear.y = TransformedPose.z;
         robot_twist.linear.z = TransformedPose.y;
@@ -595,8 +595,8 @@ public class RosPublisherExample : MonoBehaviour
         TransformedRot.Set(-(float)sub.rx, -(float)sub.ry, -(float)sub.rz);
         Debug.Log("Hay before: " + TransformedRot);
         Rotation = Quaternion.Euler(TransformedRot);
-        Debug.Log("Hy ot: " +  Rotation);
-        TransformedRot = Rotation*RobotTarget.transform.localRotation.eulerAngles;
+        Debug.Log("Hy ot: " + Rotation);
+        TransformedRot = Rotation * RobotTarget.transform.localRotation.eulerAngles;
         Debug.Log("Hay robo rot: " + RobotTarget.transform.rotation.eulerAngles);
         Debug.Log("Hay robo local rot: " + RobotTarget.transform.localRotation.eulerAngles);
         Debug.Log("Hay after: " + TransformedRot);

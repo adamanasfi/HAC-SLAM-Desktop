@@ -61,7 +61,10 @@ public class FingerPose : MonoBehaviour
         //_meshCollider.convex = true;  // We need to make this as a kabse later.
     }
 
-
+    public void DisableIndicator()
+    {
+        Indicator.SetActive(false);
+    }
 
     public void Update()
     {
@@ -119,6 +122,7 @@ public class FingerPose : MonoBehaviour
         }
         else
         {
+            if (!Indicator.activeInHierarchy) Indicator.SetActive(true);
             Indicator.transform.position = mousePosition;
         }
     }

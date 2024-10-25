@@ -22,9 +22,11 @@ public class CameraController : MonoBehaviour
         float moveZ = Input.GetAxis("Vertical");    // W/S keys for forward/backward
         float moveY = Input.GetAxis("MoveY");
 
+        float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? moveSpeed * 2f : moveSpeed;
+
         // Move the camera
         Vector3 targetMovement = new Vector3(moveX, moveY, moveZ);
-        targetMovement = transform.TransformDirection(targetMovement) * moveSpeed * Time.deltaTime;
+        targetMovement = transform.TransformDirection(targetMovement) * currentSpeed * Time.deltaTime;
 
         // Smooth movement
         transform.position = Vector3.SmoothDamp(transform.position, transform.position + targetMovement, ref velocity, smoothTime);
