@@ -48,7 +48,7 @@ public class MergedVoxelDisplay : MonoBehaviour
             if (countTillYield % 500 == 0) yield return null;
         }
         Debug.Log("Done");
-        VoxelManager.done = true;
+        ViewManager.ViewInitialChunks();
     }
 
 

@@ -4,70 +4,10 @@ using UnityEngine;
 
 public class VoxelManager : MonoBehaviour
 {
-    static Dictionary<Vector3, Chunk> ChunksDict;
-    static List<Chunk> ActivatedChunks;
-    static Vector3 cameraPosition;
-    public static bool done;
-    // Start is called before the first frame update
+    public static Dictionary<Vector3, Chunk> ChunksDict;
     void Start()
     {
         ChunksDict = new Dictionary<Vector3, Chunk>();
-        ActivatedChunks = new List<Chunk>();
-        done = false;
-    }
-
-    private void Update()
-    {
-        if (done)
-        {
-            BuildCurrentVoxels();
-            DeleteOldVoxels(); 
-        }
-    }
-
-    public static void DeleteOldVoxels()
-    {
-        cameraPosition = RoundToChunk(Camera.main.transform.position);
-        List<Chunk> chunksToDeactivate = new List<Chunk>();
-        Vector3 distance = new Vector3();
-        foreach (Chunk chunk in ActivatedChunks)
-        {
-            distance = chunk.position - cameraPosition;
-            if (Mathf.Abs((distance).magnitude) > 3 * PrefabsManager.chunkSize || Mathf.Abs(distance.y) >  PrefabsManager.chunkSize)
-            {
-                chunksToDeactivate.Add(chunk);
-            }
-        }
-        foreach (Chunk chunk in chunksToDeactivate)
-        {
-            chunk.gameobject.SetActive(false);
-            ActivatedChunks.Remove(chunk);
-        }
-    }
-
-    public static void BuildCurrentVoxels()
-    {
-        cameraPosition = RoundToChunk(Camera.main.transform.position);
-        Vector3 increment = new Vector3();
-        for (float i = -PrefabsManager.chunkSize; i <= PrefabsManager.chunkSize; i += PrefabsManager.chunkSize)
-        {
-            for (float j = 0; j <= PrefabsManager.chunkSize; j += PrefabsManager.chunkSize)
-            {
-                for (float k = -PrefabsManager.chunkSize; k <= PrefabsManager.chunkSize; k += PrefabsManager.chunkSize)
-                {
-                    increment.Set(i, j, k);
-                    if (ChunksDict.ContainsKey(cameraPosition + increment))
-                    {
-                        Chunk chunk = ChunksDict[cameraPosition + increment];
-                        if (!chunk.gameobject.activeInHierarchy)
-                        {
-                            chunk.gameobject.SetActive(true);
-                            ActivatedChunks.Add(chunk);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     public static void AddVoxel(Vector3 point, bool state)

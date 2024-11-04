@@ -15,4 +15,17 @@ public class Chunk
         gameobject.SetActive(state);
         VoxelsDict = new Dictionary<Vector3, Voxel>();
     }
+
+    public List<byte> GetChunkByteData()
+    {
+        List<byte> byteList = new();
+
+        // Iterate over the voxels in the chunk
+        foreach (var voxelEntry in VoxelsDict.Values)
+        {
+            byteList.AddRange(voxelEntry.ToByteArray());  // Use Voxel's ToByteArray method
+        }
+
+        return byteList;  // Return byte array for the whole chunk
+    }
 }

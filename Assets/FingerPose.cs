@@ -20,7 +20,7 @@ public class FingerPose : MonoBehaviour
     public GameObject[] VuforiaTargets = new GameObject[6];
     public LabelerFingerPose Labeler;
     public MinecraftBuilder _MinecraftBuilder;
-    public RosPublisherExample _RosPublisher;
+    // public RosPublisherExample _RosPublisher;
     float cubesize;
     public GameObject Selector;
     bool EditorActivator, selectorInstantiated, doneInstantiation, ConvexityState, DeletingVoxels, AddingAssets;
@@ -216,7 +216,7 @@ public class FingerPose : MonoBehaviour
                                 else
                                 {
                                     VoxelManager.AddVoxel(coliderPose,true);
-                                    if (AddingAssets) _RosPublisher.LabeledPointCloudPopulater(coliderPose, AssetLabel, AssetInstance);
+                                    // if (AddingAssets) _RosPublisher.LabeledPointCloudPopulater(coliderPose, AssetLabel, AssetInstance);
                                 }
                                 break;
                             }
@@ -388,8 +388,8 @@ public class FingerPose : MonoBehaviour
             Labeler.AssetToolTip(Selector.transform.position, AssetName, AssetLabel, AssetInstance);
             _MinecraftBuilder.AddedVoxelByte.Clear();
             officialVoxelizer();
-            _RosPublisher.PublishEditedPointCloudMsg();
-            _RosPublisher.LabelPublisher();
+           // _RosPublisher.PublishEditedPointCloudMsg();
+           // _RosPublisher.LabelPublisher();
         }
 
         else if (DeletingVoxels)
@@ -397,7 +397,7 @@ public class FingerPose : MonoBehaviour
             DeleteVoxelsMenu.SetActive(true);
             _MinecraftBuilder.DeletedVoxelByte.Clear();
             officialVoxelizer();
-            _RosPublisher.PublishDeletedVoxels();
+          //  _RosPublisher.PublishDeletedVoxels();
         }
 
         else
@@ -405,7 +405,7 @@ public class FingerPose : MonoBehaviour
             AddVoxelsMenu.SetActive(true);
             _MinecraftBuilder.AddedVoxelByte.Clear();
             officialVoxelizer();
-            _RosPublisher.PublishEditedPointCloudMsg();
+          //  _RosPublisher.PublishEditedPointCloudMsg();
             
         }
         

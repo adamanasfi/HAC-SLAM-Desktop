@@ -17,7 +17,15 @@ public class Voxel
     }
 
 
+    public List<byte> ToByteArray()
+    {
+        List<byte> byteList = new();
+        // Convert position to bytes
+        byteList.AddRange(BitConverter.GetBytes(position.x));
+        byteList.AddRange(BitConverter.GetBytes(position.z));
+        byteList.AddRange(BitConverter.GetBytes(position.y));
+        return byteList;
+    }
 
-    
 
 }
